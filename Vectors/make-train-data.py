@@ -6,12 +6,13 @@ to its semantic type and converting vectors to libsvm format.
 """
 
 NEGLABEL = 4 
-NEGEXAMPLES = 5000
-DIMENSIONS = 200
+NEGEXAMPLES = 1000
+DIMENSIONS = 300
 CUI2TUI = '/Users/dima/Boston/DictLookup/cui2tui.txt'
 TUI2SEMTYPE = '/Users/dima/Boston/DictLookup/tui2semtype.txt'
 # VECTORS = '/Users/dima/Boston/Vectors/Models/mimic.txt'
-VECTORS = '/Users/dima/Boston/Vectors/Models/wikipedia-pubmed-and-PMC-w2v.txt'
+# VECTORS = '/Users/dima/Boston/Vectors/Models/wikipedia-pubmed-and-PMC-w2v.txt'
+VECTORS = '/Users/dima/Boston/Vectors/Models/ties1mil.lowercase.txt'
 
 def read_cui_tui_map():
   """ """
@@ -92,6 +93,11 @@ def make_positive_examples(cui2semtype):
     if cui2semtype.has_key(word):
       label_set = cui2semtype[word]
       vector = make_libsvm_vector(elements[1:DIMENSIONS + 1])
+
+      # this clause is optional - works well without it
+      if len(label_set) > 1:
+        continue
+
       label = list(label_set)[0]
       print label, vector
 
