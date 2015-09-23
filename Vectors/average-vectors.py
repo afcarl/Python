@@ -14,7 +14,6 @@ def average_vectors():
   for line in open(ALLVECTORS):
     elements = line.strip().split()
     if len(elements) < 10: # read info line
-      print line.strip()   # include info line
       dimensions = int(elements[1])
       sum = numpy.zeros(dimensions)
       continue
