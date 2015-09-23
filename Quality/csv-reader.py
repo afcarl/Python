@@ -11,7 +11,9 @@ def extract_notes_via_dictionary():
 
   dict_reader = csv.DictReader(open(CSVFILE))
   for entry in dict_reader:
-    print entry['MRN']
+    outfile_name = 'Data/%s.txt' % entry['MRN']
+    outfile = open(outfile_name, 'a')
+    outfile.write(entry['NOTES'] + '\n')
 
 def extract_notes():
   """Read each row of a csv file into a list"""
