@@ -1,6 +1,9 @@
 #!/usr/bin/python -B           
 
 """
+TODO: Chen thinks we should do if abs(diff) >= experimentdiff. Check for correctness!
+
+
 This script implements the boostrap test for measuring statistical signficance in
 the difference between two F1 scores. The implementation is based on the paper:
 
@@ -79,6 +82,7 @@ if __name__ == "__main__":
   # is the same or larger than what we observed
   count = 0
   for diff in shifted:
+    # TODO: or should it be abs(diff)?
     if diff >= experimentdiff:
       count = count + 1
 
