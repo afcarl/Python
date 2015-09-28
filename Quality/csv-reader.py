@@ -1,19 +1,21 @@
 #!/usr/bin/python -B                                                                      
 
-import csv
+import csv, string
 
 # has the following columns:
 # MRN,NOTES,EVENT_TAG,EVENT_END_DT_TM
-CSVFILE = '/Volumes/chip-nlp/Private/ch152530/asthma.csv'
+CSVFILE = '/Volumes/chip-nlp/Groups/QualityMetrics/Asthma/data.csv'
 
 def extract_notes_via_dictionary():
   """Read each row of a csv file into a dictionary"""
 
   dict_reader = csv.DictReader(open(CSVFILE))
   for entry in dict_reader:
+    note_text = entry['NOTES']
+    only_printable = ''.join(c for c in note_text if c in string.printable)
     outfile_name = 'Data/%s.txt' % entry['MRN']
     outfile = open(outfile_name, 'a')
-    outfile.write(entry['NOTES'] + '\n')
+    outfile.write(only_printable + '\n')
 
 def extract_notes():
   """Read each row of a csv file into a list"""
