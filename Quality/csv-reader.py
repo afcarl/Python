@@ -5,6 +5,7 @@ import csv, string
 # has the following columns:
 # MRN,NOTES,EVENT_TAG,EVENT_END_DT_TM
 CSVFILE = '/Volumes/chip-nlp/Groups/QualityMetrics/Asthma/data.csv'
+OUTDIR = '/Volumes/chip-nlp/Groups/QualityMetrics/Asthma/Text/'
 
 def extract_notes_via_dictionary():
   """Read each row of a csv file into a dictionary"""
@@ -13,8 +14,8 @@ def extract_notes_via_dictionary():
   for entry in dict_reader:
     note_text = entry['NOTES']
     only_printable = ''.join(c for c in note_text if c in string.printable)
-    outfile_name = 'Data/%s.txt' % entry['MRN']
-    outfile = open(outfile_name, 'a')
+    outfile_name = '%s/%s.txt' % (OUTDIR, entry['MRN'])
+    outfile = open(outfile_name, 'a') # multiple entries for a patient
     outfile.write(only_printable + '\n')
 
 def extract_notes():
