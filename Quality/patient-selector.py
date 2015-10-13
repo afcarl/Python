@@ -1,8 +1,7 @@
-#!/usr/bin/python -B                                                                      
-
+#!/usr/bin/python -B 
 import csv, datetime
 
-CSVFILE = '/Users/dima/Boston/Quality/Asthma/data.csv'
+CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 
 def severity_score_patients():
   """Patients for severy score compliance metric"""
