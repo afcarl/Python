@@ -3,7 +3,7 @@ import collections, os, csv
 
 DOCUMENTS = '/Users/Dima/Boston/Data/Temp/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
-MINFREQUENCY = 5
+MINFREQUENCY = 100
 
 def read_file(file):
   """Return a file as a list of words"""      
@@ -67,8 +67,23 @@ def severity_score_labels():
   
   return mrn2label
 
-if __name__ == "__main__":
+def load_labels_from_file(dsv_file):
+  """Pipe/bar separated file stores the labels"""
 
-  alphabet = make_alphabet(DOCUMENTS)
-  labels = severity_score_labels()
-  make_vectors(DOCUMENTS, alphabet, labels)
+  # key: file name (no extension), value: label
+  name2label = {}
+  for line in open(dsv_file):
+    name, label = line.strip().split('|')
+    name2label[name] = label
+
+  return name2label
+
+if __name__ == "__main__":
+  
+  alphabet = make_alphabet('../Misc/Test/')
+  labels = load_labels_from_file('../Misc/test-labels.txt')
+  make_vectors('../Misc/Test/', alphabet, labels)
+
+  # alphabet = make_alphabet(DOCUMENTS)
+  # labels = severity_score_labels()
+  # make_vectors(DOCUMENTS, alphabet, labels)
