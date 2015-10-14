@@ -1,8 +1,9 @@
 #!/usr/bin/python -B 
 import collections, os, csv
 
-PATH = '/Users/Dima/Boston/Data/Temp/Asthma/Text/'
+DOCUMENTS = '/Users/Dima/Boston/Data/Temp/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
+MINFREQUENCY = 5
 
 def read_file(file):
   """Return a file as a list of words"""      
@@ -15,31 +16,31 @@ def read_file(file):
     
   return words
 
-def make_alphabet():
+def make_alphabet(corpus_path):
   """Do a pass over corpus and map all unique words to dimensions"""
   
   word_counts = collections.Counter()
-  for file in os.listdir(PATH):
-    words = read_file(PATH + file)
+  for file in os.listdir(corpus_path):
+    words = read_file(corpus_path + file)
     word_counts.update(words)
 
   # libsvm indexes start from 1
   index = 1
-  # key: word, value: index
-  alphabet = collections.OrderedDict() 
+  # remember the order in which words were inserted
+  word2index = collections.OrderedDict() 
   for word, count in word_counts.items():
-    if count > 10:
-      alphabet[word] = index
+    if count >= MINFREQUENCY:
+      word2index[word] = index
       index = index + 1
   
-  return alphabet
+  return word2index
 
-def make_vectors(alphabet, labels):
+def make_vectors(corpus_path, alphabet, labels):
   """Convert documents to vectors"""
 
-  for file in os.listdir(PATH):
+  for file in os.listdir(corpus_path):
     vector = []
-    document_unique_words = set(read_file(PATH + file))
+    document_unique_words = set(read_file(corpus_path + file))
     for word, index in alphabet.items():
       if word in document_unique_words:
         vector.append("%s:%s" % (index, 1))
@@ -52,8 +53,8 @@ def make_vectors(alphabet, labels):
       index = index + 1
 
     # output vector
-    mrn = file.split('.')[0]
-    label = labels[mrn]
+    document_name_no_extension = file.split('.')[0]
+    label = labels[document_name_no_extension]
     print label2index[label], ' '.join(vector)
 
 def severity_score_labels():
@@ -68,6 +69,6 @@ def severity_score_labels():
 
 if __name__ == "__main__":
 
-  alphabet = make_alphabet()
+  alphabet = make_alphabet(DOCUMENTS)
   labels = severity_score_labels()
-  make_vectors(alphabet, labels)
+  make_vectors(DOCUMENTS, alphabet, labels)
