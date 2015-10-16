@@ -1,35 +1,53 @@
 #!/usr/bin/python -B
-import csv, string
+import csv, string, datetime
 
-# has the following columns:
+# note csv file has the following columns:
 # MRN, NOTES, Date
-CSVFILE = '/Volumes/chip-nlp/Groups/QualityMetrics/Asthma/severity-score.csv'
-OUTDIR = '/Volumes/chip-nlp/Groups/QualityMetrics/Asthma/Text/'
+ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Asthma/Data/data.csv'
+NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/Asthma/severity-notes.csv'
+OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 
-def extract_notes_via_dictionary():
+def map_patients_to_date_ranges():
+  """Generate a patient to 13 month date range map"""
+
+  # key: mrn, value: [(start_date1, end_date1), ...]
+  # end date is date of service
+  mrn2dates = {} 
+  # 13 months expressed in days
+  delta = datetime.timedelta(days = 396)
+
+  dict_reader = csv.DictReader(open(ASTHMACSV, "rU"))
+  for line in dict_reader:
+    if line['DATE_OF_LAST_AAP'] == '':
+      date_of_service = datetime.datetime.strptime(line['DATE_OF_SERVICE'], '%m/%d/%y')
+      start_date = date_of_service - delta
+      if line['MRN'] not in mrn2dates:
+        mrn2dates[line['MRN']] = []
+      mrn2dates[line['MRN']].append((start_date, date_of_service))
+
+  return mrn2dates
+
+def map_date_to_file(mrn2dates, mrn, date):
+  """Map mrn and date to correct patient file"""
+
+  for start_date, end_date in mrn2dates[mrn]:
+    if date >= start_date and date <= end_date:
+      file_name = '%s%s-%s.txt' % (OUTDIR, mrn, end_date.strftime('%m-%d-%Y'))
+      return file_name
+
+def extract_notes(mrn2dates):
   """Read each row of a csv file into a dictionary"""
 
-  dict_reader = csv.DictReader(open(CSVFILE))
+  dict_reader = csv.DictReader(open(NOTECSV))
   for line in dict_reader:
     note_text = line['NOTES']
     only_printable = ''.join(c for c in note_text if c in string.printable)
-    outfile_name = '%s/%s.txt' % (OUTDIR, line['MRN'])
-    outfile = open(outfile_name, 'a') # multiple entries for a patient
+    note_date = datetime.datetime.strptime(line['Date'], '%m/%d/%Y')
+    outfile_name = map_date_to_file(mrn2dates, line['MRN'], note_date)
+    outfile = open(outfile_name, 'a') 
     outfile.write(only_printable + '\n')
-
-def extract_notes():
-  """Read each row of a csv file into a list"""
-
-  csv_reader = csv.reader(open(CSVFILE))
-  header = csv_reader.next()
-  for entry in csv_reader:
-    mrn = entry[0]
-    text = entry[1]
-    outfile = open('Data/' + mrn + '.txt', 'w')
-    outfile.write(text + '\n')
 
 if __name__ == "__main__":
   
-  extract_notes_via_dictionary()
-
-    
+  mrn2dates = map_patients_to_date_ranges()
+  extract_notes(mrn2dates)
