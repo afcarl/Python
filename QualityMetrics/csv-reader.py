@@ -1,11 +1,31 @@
 #!/usr/bin/python -B
 import csv, string, datetime
 
+"""
+An classification instance is an MRN + DATE_OF_SERVICE.
+We need to save all notes for a patient with a given MRN
+and a DATE_OF_SERVICE in a text file in the output directory.
+Each instance (file) will be mapped to a label.
+"""
+
 # note csv file has the following columns:
 # MRN, NOTES, Date
 ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Asthma/Data/data.csv'
 NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/Asthma/severity-notes.csv'
-OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
+OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text'
+LABELFILE = 'labels.txt'
+
+def map_instances_to_labels():
+  """Save the mapping from file name to label"""
+  
+  label_file = open(LABELFILE, 'w')
+  dict_reader = csv.DictReader(open(ASTHMACSV, "rU"))
+  for line in dict_reader:
+    if line['DATE_OF_LAST_AAP'] == '':
+      date_of_service = datetime.datetime.strptime(line['DATE_OF_SERVICE'], '%m/%d/%y')
+      file_name_no_ext = '%s-%s' % (line['MRN'], date_of_service.strftime('%m-%d-%Y'))
+      label = line['IS_SEVERITY_DOC_PPM'] # this is the label, right?
+      label_file.write('%s|%s\n' % (file_name_no_ext, label))
 
 def map_patients_to_date_ranges():
   """Generate a patient to 13 month date range map"""
@@ -32,7 +52,7 @@ def map_date_to_file(mrn2dates, mrn, date):
 
   for start_date, end_date in mrn2dates[mrn]:
     if date >= start_date and date <= end_date:
-      file_name = '%s%s-%s.txt' % (OUTDIR, mrn, end_date.strftime('%m-%d-%Y'))
+      file_name = '%s/%s-%s.txt' % (OUTDIR, mrn, end_date.strftime('%m-%d-%Y'))
       return file_name
 
 def extract_notes(mrn2dates):
@@ -51,3 +71,4 @@ if __name__ == "__main__":
   
   mrn2dates = map_patients_to_date_ranges()
   extract_notes(mrn2dates)
+  map_instances_to_labels()
