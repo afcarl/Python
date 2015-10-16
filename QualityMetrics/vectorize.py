@@ -1,9 +1,9 @@
 #!/usr/bin/python -B 
 import collections, os, csv
 
-DOCUMENTS = '/Users/Dima/Boston/Data/Temp/Asthma/Text/'
+DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
-MINFREQUENCY = 100
+MINFREQUENCY = 10
 
 def read_file(file):
   """Return a file as a list of words"""      
@@ -80,10 +80,7 @@ def load_labels_from_file(dsv_file):
 
 if __name__ == "__main__":
   
-  alphabet = make_alphabet('../Misc/Test/')
-  labels = load_labels_from_file('../Misc/test-labels.txt')
-  make_vectors('../Misc/Test/', alphabet, labels)
-
-  # alphabet = make_alphabet(DOCUMENTS)
+  alphabet = make_alphabet(DOCUMENTS)
   # labels = severity_score_labels()
-  # make_vectors(DOCUMENTS, alphabet, labels)
+  labels = load_labels_from_file('labels.txt')
+  make_vectors(DOCUMENTS, alphabet, labels)
