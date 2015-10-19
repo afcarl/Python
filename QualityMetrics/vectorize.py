@@ -4,7 +4,7 @@ import collections, os, csv
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
-MINFREQUENCY = 1
+MINFREQUENCY = 100
 
 def read_unigrams(file):
   """Return a file as a list of words"""      
@@ -22,11 +22,13 @@ def read_bigrams(file):
 
   bigrams = []
   for line in open(file):
-    words = line.lower().split()
+    words = line.split()
     alpha_words = [word for word in words if word.isalpha()]
     for i in range(len(alpha_words) - 1):
       bigram = '%s_%s' % (alpha_words[i], alpha_words[i+1])
-      print bigram
+      bigrams.append(bigram.lower())
+
+  return bigrams
 
 def make_alphabet(corpus_path):
   """Do a pass over corpus and map all unique words to dimensions"""
