@@ -3,9 +3,10 @@ import collections, os, csv
 
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
+LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
 MINFREQUENCY = 1
 
-def read_file(file):
+def read_unigrams(file):
   """Return a file as a list of words"""      
   
   words = []
@@ -16,12 +17,23 @@ def read_file(file):
     
   return words
 
+def read_bigrams(file):
+  """Return a file as a list of bi-grams"""
+
+  bigrams = []
+  for line in open(file):
+    words = line.lower().split()
+    alpha_words = [word for word in words if word.isalpha()]
+    for i in range(len(alpha_words) - 1):
+      bigram = '%s_%s' % (alpha_words[i], alpha_words[i+1])
+      print bigram
+
 def make_alphabet(corpus_path):
   """Do a pass over corpus and map all unique words to dimensions"""
   
   word_counts = collections.Counter()
   for file in os.listdir(corpus_path):
-    words = read_file(corpus_path + file)
+    words = read_bigrams(corpus_path + file)
     word_counts.update(words)
 
   # libsvm indexes start from 1
@@ -40,7 +52,7 @@ def make_vectors(corpus_path, alphabet, labels):
 
   for file in os.listdir(corpus_path):
     vector = []
-    document_unique_words = set(read_file(corpus_path + file))
+    document_unique_words = set(read_bigrams(corpus_path + file))
     for word, index in alphabet.items():
       if word in document_unique_words:
         vector.append("%s:%s" % (index, 1))
@@ -71,5 +83,5 @@ def load_labels_from_file(dsv_file):
 if __name__ == "__main__":
   
   alphabet = make_alphabet(DOCUMENTS)
-  labels = load_labels_from_file('labels.txt')
+  labels = load_labels_from_file(LABELS)
   make_vectors(DOCUMENTS, alphabet, labels)
