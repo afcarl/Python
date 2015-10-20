@@ -4,23 +4,25 @@ import collections, os, csv
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
-MINFREQUENCY = 100
+MINFREQUENCY = 10
 
 def read_unigrams(file):
   """Return a file as a list of words"""      
   
-  words = []
-  for line in open(file):
-    for word in line.split():
-      if word.isalpha():
-        words.append(word.lower())
-    
-  return words
+  unigrams = []
+  text = open(file).read().replace('\n', ' ')
+  words = text.split()
+  alpha_words = [word for word in words if word.isalpha()]
+  for word in alpha_words:
+    unigrams.append(word.lower())
+      
+  return unigrams
 
 def read_bigrams(file):
   """Return a file as a list of bi-grams"""
 
   bigrams = []
+  file_as_string = open(file).read().replace('\n', '')
   for line in open(file):
     words = line.split()
     alpha_words = [word for word in words if word.isalpha()]
@@ -84,6 +86,7 @@ def load_labels_from_file(dsv_file):
 
 if __name__ == "__main__":
   
-  alphabet = make_alphabet(DOCUMENTS)
-  labels = load_labels_from_file(LABELS)
-  make_vectors(DOCUMENTS, alphabet, labels)
+  #alphabet = make_alphabet(DOCUMENTS)
+  #labels = load_labels_from_file(LABELS)
+  #make_vectors(DOCUMENTS, alphabet, labels)
+  print read_unigrams('test.txt')
