@@ -22,14 +22,13 @@ def read_bigrams(file):
   """Return a file as a list of bi-grams"""
 
   bigrams = []
-  file_as_string = open(file).read().replace('\n', '')
-  for line in open(file):
-    words = line.split()
-    alpha_words = [word for word in words if word.isalpha()]
-    for i in range(len(alpha_words) - 1):
-      bigram = '%s_%s' % (alpha_words[i], alpha_words[i+1])
-      bigrams.append(bigram.lower())
-
+  text = open(file).read().replace('\n', ' ')
+  words = text.split()
+  alpha_words = [word for word in words if word.isalpha()]
+  for i in range(len(alpha_words) - 1):
+    bigram = '%s_%s' % (alpha_words[i], alpha_words[i+1])
+    bigrams.append(bigram.lower())
+    
   return bigrams
 
 def make_alphabet(corpus_path):
@@ -86,7 +85,6 @@ def load_labels_from_file(dsv_file):
 
 if __name__ == "__main__":
   
-  #alphabet = make_alphabet(DOCUMENTS)
-  #labels = load_labels_from_file(LABELS)
-  #make_vectors(DOCUMENTS, alphabet, labels)
-  print read_unigrams('test.txt')
+  alphabet = make_alphabet(DOCUMENTS)
+  labels = load_labels_from_file(LABELS)
+  make_vectors(DOCUMENTS, alphabet, labels)
