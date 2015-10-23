@@ -4,7 +4,10 @@ import collections, os, csv
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
-MINFREQUENCY = 50
+WORD2INDEX = './word2index.txt'
+LABEL2INDEX = './label2index.txt'
+TRAIN = './train.txt'
+MINFREQUENCY = 25
 
 def read_unigrams(file):
   """Return a file as a list of words"""      
@@ -48,34 +51,39 @@ def make_alphabet(corpus_path):
       word2index[word] = index
       index = index + 1
   
-  alphabet_file = open('word2index.txt', 'w')
+  word_alphabet_file = open(WORD2INDEX, 'w')
   for word, index in word2index.items():
-    alphabet_file.write('%s|%d\n' % (word, index))
+    word_alphabet_file.write('%s|%d\n' % (word, index))
 
   return word2index
 
 def make_vectors(corpus_path, alphabet, labels):
   """Convert documents to vectors"""
 
+  training_data = open(TRAIN, 'w')
+  
   for file in os.listdir(corpus_path):
     vector = []
     document_unique_words = set(read_bigrams(corpus_path + file))
     for word, index in alphabet.items():
       if word in document_unique_words:
-        vector.append("%s:%s" % (index, 1))
+        vector.append('%s:%s' % (index, 1))
     
     # make label alphabet
     index = 1
     label2index = {}
+    label_alphabet_file = open(LABEL2INDEX, 'w')
     for label in set(labels.values()):
       label2index[label] = index
+      label_alphabet_file.write('%s|%s\n' % (label, index))
       index = index + 1
 
     # output vector
     document_name_no_extension = file.split('.')[0]
-    if document_name_no_extension in labels:
-      label = labels[document_name_no_extension]
-      print label2index[label], ' '.join(vector)
+    # if document_name_no_extension in labels:
+    label = labels[document_name_no_extension]
+    line = '%s %s\n' % (label2index[label], ' '.join(vector))
+    training_data.write(line)
 
 def load_labels_from_file(dsv_file):
   """Pipe/bar separated file stores the labels"""
