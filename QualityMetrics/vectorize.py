@@ -4,7 +4,7 @@ import collections, os, csv
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
-MINFREQUENCY = 10
+MINFREQUENCY = 50
 
 def read_unigrams(file):
   """Return a file as a list of words"""      
@@ -48,6 +48,10 @@ def make_alphabet(corpus_path):
       word2index[word] = index
       index = index + 1
   
+  alphabet_file = open('word2index.txt', 'w')
+  for word, index in word2index.items():
+    alphabet_file.write('%s|%d\n' % (word, index))
+
   return word2index
 
 def make_vectors(corpus_path, alphabet, labels):
@@ -69,8 +73,9 @@ def make_vectors(corpus_path, alphabet, labels):
 
     # output vector
     document_name_no_extension = file.split('.')[0]
-    label = labels[document_name_no_extension]
-    print label2index[label], ' '.join(vector)
+    if document_name_no_extension in labels:
+      label = labels[document_name_no_extension]
+      print label2index[label], ' '.join(vector)
 
 def load_labels_from_file(dsv_file):
   """Pipe/bar separated file stores the labels"""
