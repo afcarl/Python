@@ -7,7 +7,7 @@ LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
 WORD2INDEX = './word2index.txt'
 LABEL2INDEX = './label2index.txt'
 TRAIN = './train.txt'
-MINFREQUENCY = 25
+MINFREQUENCY = 100
 
 def read_unigrams(file):
   """Return a file as a list of words"""      
@@ -80,12 +80,11 @@ def make_vectors(corpus_path, alphabet, labels):
 
     # output vector
     document_name_no_extension = file.split('.')[0]
-    # if document_name_no_extension in labels:
     label = labels[document_name_no_extension]
     line = '%s %s\n' % (label2index[label], ' '.join(vector))
     training_data.write(line)
 
-def load_labels_from_file(dsv_file):
+def load_labels(dsv_file):
   """Pipe/bar separated file stores the labels"""
 
   # key: file name (no extension), value: label
@@ -98,6 +97,10 @@ def load_labels_from_file(dsv_file):
 
 if __name__ == "__main__":
   
-  alphabet = make_alphabet(DOCUMENTS)
-  labels = load_labels_from_file(LABELS)
-  make_vectors(DOCUMENTS, alphabet, labels)
+  alphabet = make_alphabet('/Users/dima/Boston/Data/WebKb/Text/')
+  labels = load_labels('/Users/dima/Boston/Data/WebKb/labels.txt')
+  make_vectors('/Users/dima/Boston/Data/WebKb/Text/', alphabet, labels)
+
+  # alphabet = make_alphabet(DOCUMENTS)
+  # labels = load_labels_from_file(LABELS)
+  # make_vectors(DOCUMENTS, alphabet, labels)
