@@ -7,7 +7,7 @@ LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
 WORD2INDEX = './word2index.txt'
 LABEL2INDEX = './label2index.txt'
 TRAIN = './train.txt'
-MINFREQUENCY = 100
+MINFREQUENCY = 50
 
 def read_unigrams(file):
   """Return a file as a list of words"""      
@@ -97,10 +97,6 @@ def load_labels(dsv_file):
 
 if __name__ == "__main__":
   
-  alphabet = make_alphabet('/Users/dima/Boston/Data/WebKb/Text/')
-  labels = load_labels('/Users/dima/Boston/Data/WebKb/labels.txt')
-  make_vectors('/Users/dima/Boston/Data/WebKb/Text/', alphabet, labels)
-
-  # alphabet = make_alphabet(DOCUMENTS)
-  # labels = load_labels_from_file(LABELS)
-  # make_vectors(DOCUMENTS, alphabet, labels)
+  alphabet = make_alphabet(DOCUMENTS)
+  labels = load_labels(LABELS)
+  make_vectors(DOCUMENTS, alphabet, labels)

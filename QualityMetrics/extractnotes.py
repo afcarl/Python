@@ -13,8 +13,8 @@ Each instance (file) will be mapped to a label.
 ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Asthma/Data/data.csv'
 NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/Asthma/severity-notes.csv'
 OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text'
-LABELFILE = 'labels.txt'
-OK_DATA_REPORTING_TYPES = set(['1'])
+LABELFILE = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
+OK_DATA_REPORTING_TYPES = set(['1,3'])
 
 def map_patients_to_date_ranges():
   """Generate a patient to 13 month date range map"""
