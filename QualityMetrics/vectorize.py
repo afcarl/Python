@@ -4,10 +4,10 @@ import collections, os, csv
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
-WORD2INDEX = './word2index.txt'
+FEATURE2INDEX = './feature2index.txt'
 LABEL2INDEX = './label2index.txt'
 TRAIN = './train.txt'
-MINFREQUENCY = 50
+MINFREQUENCY = 20
 
 def read_unigrams(file):
   """Return a file as a list of words"""      
@@ -34,39 +34,43 @@ def read_bigrams(file):
     
   return bigrams
 
-def make_alphabet(corpus_path):
-  """Do a pass over corpus and map all unique words to dimensions"""
+def make_alphabet(corpus_path, feature_extractors):
+  """Do a pass over corpus and map all unique features to dimensions"""
   
-  word_counts = collections.Counter()
+  feature_counts = collections.Counter()
   for file in os.listdir(corpus_path):
-    words = read_bigrams(corpus_path + file)
-    word_counts.update(words)
+    for feature_extractor in feature_extractors:
+      features = feature_extractor(corpus_path + file)
+      feature_counts.update(features)
 
   # libsvm indexes start from 1
   index = 1
-  # remember the order in which words were inserted
-  word2index = collections.OrderedDict() 
-  for word, count in word_counts.items():
+  # remember the order in which features were inserted
+  feature2index = collections.OrderedDict() 
+  for feature, count in feature_counts.items():
     if count >= MINFREQUENCY:
-      word2index[word] = index
+      feature2index[feature] = index
       index = index + 1
   
-  word_alphabet_file = open(WORD2INDEX, 'w')
-  for word, index in word2index.items():
-    word_alphabet_file.write('%s|%d\n' % (word, index))
+  feature_alphabet_file = open(FEATURE2INDEX, 'w')
+  for feature, index in feature2index.items():
+    feature_alphabet_file.write('%s|%d\n' % (feature, index))
 
-  return word2index
+  return feature2index
 
-def make_vectors(corpus_path, alphabet, labels):
+def make_vectors(corpus_path, alphabet, labels, feature_extractors):
   """Convert documents to vectors"""
 
   training_data = open(TRAIN, 'w')
   
   for file in os.listdir(corpus_path):
     vector = []
-    document_unique_words = set(read_bigrams(corpus_path + file))
-    for word, index in alphabet.items():
-      if word in document_unique_words:
+    document_features = []
+    for feature_extractor in feature_extractors:
+      document_features.extend(feature_extractor(corpus_path + file))
+    document_unique_features = set(document_features)
+    for feature, index in alphabet.items():
+      if feature in document_unique_features:
         vector.append('%s:%s' % (index, 1))
     
     # make label alphabet
@@ -97,6 +101,7 @@ def load_labels(dsv_file):
 
 if __name__ == "__main__":
   
-  alphabet = make_alphabet(DOCUMENTS)
+  feature_extractors = [read_unigrams, read_bigrams]
+  alphabet = make_alphabet(DOCUMENTS, feature_extractors)
   labels = load_labels(LABELS)
-  make_vectors(DOCUMENTS, alphabet, labels)
+  make_vectors(DOCUMENTS, alphabet, labels, feature_extractors)
