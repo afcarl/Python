@@ -8,13 +8,12 @@ and a DATE_OF_SERVICE in a text file in the output directory.
 Each instance (file) will be mapped to a label.
 """
 
-# note csv file has the following columns:
-# MRN, NOTES, Date
+# note csv file has the following columns: MRN, NOTES, Date
 ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Asthma/Data/data.csv'
 NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/Asthma/severity-notes.csv'
 OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text'
 LABELFILE = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
-OK_DATA_REPORTING_TYPES = set(['1,3'])
+OK_DATA_REPORTING_TYPES = set(['1', '3'])
 
 def map_patients_to_date_ranges():
   """Generate a patient to 13 month date range map"""
@@ -84,7 +83,9 @@ def extract_notes(mrn2dates):
     outfile_name = map_date_to_file(mrn2dates, line['MRN'], note_date)
     if outfile_name != None:
       outfile = open(outfile_name, 'a') 
-      outfile.write(only_printable + '\n')
+      # save note date in addition to note text for debugging
+      output = 'note date: %s\n%s\n' % (line['Date'], only_printable)
+      outfile.write(output)
 
 if __name__ == "__main__":
   
