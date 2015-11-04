@@ -8,7 +8,6 @@ and a DATE_OF_SERVICE in a text file in the output directory.
 Each instance (file) will be mapped to a label.
 """
 
-# note csv file has the following columns: MRN, NOTES, Date
 ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Asthma/Data/data.csv'
 NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/Asthma/severity-notes.csv'
 OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text'
@@ -40,7 +39,7 @@ def map_patients_to_date_ranges():
 
   return mrn2dates
 
-def map_instances_to_labels():
+def write_instance_to_label_map():
   """Save the mapping from file name to label"""
   
   label_file = open(LABELFILE, 'w')
@@ -57,38 +56,56 @@ def map_instances_to_labels():
     label = line['IS_SEVERITY_DOC_PPM'] # this is the label, right?
     label_file.write('%s|%s\n' % (file_name_no_ext, label))
 
-def map_date_to_file(mrn2dates, mrn, date):
+def map_date_to_file(mrn2dates, mrn, date, include_label=False):
   """Map mrn and date to correct patient file"""
+
+  # could be multiple files for some mrns
+  # e.g. '1104576' had two visits several days apart
+  # thus for this mrn we create two classification instances
+  # all available notes should be written to files for both visits
+  file_names = []
+
+  # prefix files with labels for debugging
+  if include_label:
+    labels = {}
+    for line in open(LABELFILE):
+      id, label = line.strip().split('|')
+      labels[id] = label
 
   for start_date, end_date in mrn2dates[mrn]:
     if date >= start_date and date <= end_date:
       file_name = '%s/%s-%s.txt' % (OUTDIR, mrn, end_date.strftime('%m-%d-%Y'))
-      return file_name
+      if include_label:
+        id = '%s-%s' % (mrn, end_date.strftime('%m-%d-%Y'))
+        label = 'Unknown'
+        if id in labels:
+          label = labels[id]      
+          file_name = '%s/%s-%s-%s.txt' % (OUTDIR, label, mrn, end_date.strftime('%m-%d-%Y'))
+      file_names.append(file_name)
   
-  # no date range found for this mrn/date
-  # probably this mrn was seen multiple times
-  # and for some of them DATA_REPORTING_TYPE is 0
-  return None
+  return file_names
 
 def extract_notes(mrn2dates):
-  """Read each row of a csv file into a dictionary"""
+  """Loop through notes and write them to files representing instances"""
 
+  # note csv file has the following columns: MRN, NOTES, Date 
   dict_reader = csv.DictReader(open(NOTECSV))
+  
   for line in dict_reader:
     if line['MRN'] not in mrn2dates:
       continue # we don't have labels for all mrns
     note_text = line['NOTES']
     only_printable = ''.join(c for c in note_text if c in string.printable)
     note_date = datetime.datetime.strptime(line['Date'], '%m/%d/%Y')
-    outfile_name = map_date_to_file(mrn2dates, line['MRN'], note_date)
-    if outfile_name != None:
+    # outfile_name = map_date_to_file(mrn2dates, line['MRN'], note_date)
+    file_names = map_date_to_file(mrn2dates, line['MRN'], note_date, include_label=True)
+    for outfile_name in file_names:
       outfile = open(outfile_name, 'a') 
-      # save note date in addition to note text for debugging
       output = 'note date: %s\n%s\n' % (line['Date'], only_printable)
       outfile.write(output)
 
 if __name__ == "__main__":
   
   mrn2dates = map_patients_to_date_ranges()
-  map_instances_to_labels()
+  write_instance_to_label_map()
   extract_notes(mrn2dates)
