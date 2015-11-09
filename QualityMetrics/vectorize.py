@@ -4,43 +4,56 @@ import collections, os, csv
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
 CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
+STOPWORDS = '/Users/dima/Boston/Data/Misc/stopwords.txt'
 FEATURE2INDEX = './feature2index.txt'
 LABEL2INDEX = './label2index.txt'
 TRAIN = './train.txt'
-MINFREQUENCY = 20
+MINFREQUENCY = 50
 
-def read_unigrams(file):
+def read_stopwords(stopword_file):
+  """Read stopwords from a file into a set"""
+
+  stopwords = []
+  for line in open(stopword_file):
+    if not line.startswith('#'):
+      stopwords.append(line.strip())
+
+  return set(stopwords)
+
+def read_unigrams(file, stopwords):
   """Return a file as a list of words"""      
   
   unigrams = []
-  text = open(file).read().replace('\n', ' ')
+  text = open(file).read().lower().replace('\n', ' ')
   words = text.split()
   alpha_words = [word for word in words if word.isalpha()]
-  for word in alpha_words:
-    unigrams.append(word.lower())
+  no_junk = [word for word in alpha_words if word not in stopwords]
+  for word in no_junk:
+    unigrams.append(word)
       
   return unigrams
 
-def read_bigrams(file):
+def read_bigrams(file, stopwords):
   """Return a file as a list of bi-grams"""
 
   bigrams = []
-  text = open(file).read().replace('\n', ' ')
+  text = open(file).read().lower().replace('\n', ' ')
   words = text.split()
   alpha_words = [word for word in words if word.isalpha()]
-  for i in range(len(alpha_words) - 1):
-    bigram = '%s_%s' % (alpha_words[i], alpha_words[i+1])
-    bigrams.append(bigram.lower())
-    
+  no_junk = [word for word in alpha_words if word not in stopwords]
+  for i in range(len(no_junk) - 1):
+    bigram = '%s_%s' % (no_junk[i], no_junk[i+1])
+    bigrams.append(bigram)
+
   return bigrams
 
-def make_alphabet(corpus_path, feature_extractors):
+def make_alphabet(corpus_path, feature_extractors, stopwords):
   """Do a pass over corpus and map all unique features to dimensions"""
   
   feature_counts = collections.Counter()
   for file in os.listdir(corpus_path):
     for feature_extractor in feature_extractors:
-      features = feature_extractor(corpus_path + file)
+      features = feature_extractor(corpus_path + file, stopwords)
       feature_counts.update(features)
 
   # libsvm indexes start from 1
@@ -58,19 +71,19 @@ def make_alphabet(corpus_path, feature_extractors):
 
   return feature2index
 
-def make_vectors(corpus_path, alphabet, labels, feature_extractors):
+def make_vectors(corpus_path, alphabet, labels, feature_extractors, stopwords):
   """Convert documents to vectors"""
 
   training_data = open(TRAIN, 'w')
   
   for file in os.listdir(corpus_path):
     vector = []
-    document_features = []
+    doc_features = []
     for feature_extractor in feature_extractors:
-      document_features.extend(feature_extractor(corpus_path + file))
-    document_unique_features = set(document_features)
+      doc_features.extend(feature_extractor(corpus_path + file, stopwords))
+    doc_unique_features = set(doc_features)
     for feature, index in alphabet.items():
-      if feature in document_unique_features:
+      if feature in doc_unique_features:
         vector.append('%s:%s' % (index, 1))
     
     # make label alphabet
@@ -100,8 +113,10 @@ def load_labels(dsv_file):
   return name2label
 
 if __name__ == "__main__":
-  
+
   feature_extractors = [read_unigrams, read_bigrams]
-  alphabet = make_alphabet(DOCUMENTS, feature_extractors)
+
+  stopwords = read_stopwords(STOPWORDS)
+  alphabet = make_alphabet(DOCUMENTS, feature_extractors, stopwords)
   labels = load_labels(LABELS)
-  make_vectors(DOCUMENTS, alphabet, labels, feature_extractors)
+  make_vectors(DOCUMENTS, alphabet, labels, feature_extractors, stopwords)
