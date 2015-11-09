@@ -97,8 +97,7 @@ def extract_notes(mrn2dates):
     note_text = line['NOTES']
     only_printable = ''.join(c for c in note_text if c in string.printable)
     note_date = datetime.datetime.strptime(line['Date'], '%m/%d/%Y')
-    # outfile_name = map_date_to_file(mrn2dates, line['MRN'], note_date)
-    file_names = map_date_to_file(mrn2dates, line['MRN'], note_date, include_label=True)
+    file_names = map_date_to_file(mrn2dates, line['MRN'], note_date)
     for outfile_name in file_names:
       outfile = open(outfile_name, 'a') 
       output = 'note date: %s\n%s\n' % (line['Date'], only_printable)
