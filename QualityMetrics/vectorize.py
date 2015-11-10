@@ -2,7 +2,6 @@
 import collections, os, csv
 
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
-CSVFILE = '/Users/dima/Boston/QualityMetrics/Asthma/data.csv'
 LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
 STOPWORDS = '/Users/dima/Boston/Data/Misc/stopwords.txt'
 FEATURE2INDEX = './feature2index.txt'
