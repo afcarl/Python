@@ -41,9 +41,10 @@ def map_patients_to_date_ranges():
 
 def write_instance_to_label_map():
   """Save the mapping from file name to label"""
-  
-  label_file = open(LABELFILE, 'w')
+
   dict_reader = csv.DictReader(open(ASTHMACSV, "rU"))
+  label_file = open(LABELFILE, 'w')
+
   for line in dict_reader:
     if line['DATA_REPORTING_TYPE'] not in OK_DATA_REPORTING_TYPES:
       continue # they weren't labeled manually
@@ -88,7 +89,7 @@ def map_date_to_file(mrn2dates, mrn, date, include_label=False):
 def extract_notes(mrn2dates):
   """Loop through notes and write them to files representing instances"""
 
-  # note csv file has the following columns: MRN, NOTES, Date 
+  # note csv file has columns: MRN, NOTES, NOTE_DATE, CLINIC_DESCRIPTION 
   dict_reader = csv.DictReader(open(NOTECSV))
   
   for line in dict_reader:
@@ -96,11 +97,11 @@ def extract_notes(mrn2dates):
       continue # we don't have labels for all mrns
     note_text = line['NOTES']
     only_printable = ''.join(c for c in note_text if c in string.printable)
-    note_date = datetime.datetime.strptime(line['Date'], '%m/%d/%Y')
+    note_date = datetime.datetime.strptime(line['NOTE_DATE'], '%Y/%m/%d')
     file_names = map_date_to_file(mrn2dates, line['MRN'], note_date)
     for outfile_name in file_names:
       outfile = open(outfile_name, 'a') 
-      output = 'note date: %s\n%s\n' % (line['Date'], only_printable)
+      output = 'note date: %s\n%s\n' % (line['NOTE_DATE'], only_printable)
       outfile.write(output)
 
 if __name__ == "__main__":
