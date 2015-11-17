@@ -1,5 +1,6 @@
 #!/usr/bin/python -B
-import csv, string, datetime
+
+import csv, string, datetime, os.path, shutil
 
 """
 A classification instance is an MRN + DATE_OF_SERVICE.
@@ -57,7 +58,7 @@ def write_instance_to_label_map():
     label = line['IS_SEVERITY_DOC_PPM'] # this is the label, right?
     label_file.write('%s|%s\n' % (file_name_no_ext, label))
 
-def map_date_to_file(mrn2dates, mrn, date, include_label=False):
+def map_date_to_file(mrn2dates, mrn, date):
   """Map mrn and date to correct patient file"""
 
   # could be multiple files for some mrns
@@ -66,22 +67,19 @@ def map_date_to_file(mrn2dates, mrn, date, include_label=False):
   # all available notes should be written to files for both visits
   file_names = []
 
-  # prefix files with labels for debugging
-  if include_label:
-    labels = {}
-    for line in open(LABELFILE):
-      id, label = line.strip().split('|')
-      labels[id] = label
+  # need label to place file into the right dir
+  labels = {}
+  for line in open(LABELFILE):
+    id, label = line.strip().split('|')
+    labels[id] = label
 
   for start_date, end_date in mrn2dates[mrn]:
     if date >= start_date and date <= end_date:
-      file_name = '%s/%s-%s.txt' % (OUTDIR, mrn, end_date.strftime('%m-%d-%Y'))
-      if include_label:
-        id = '%s-%s' % (mrn, end_date.strftime('%m-%d-%Y'))
-        label = 'Unknown'
-        if id in labels:
-          label = labels[id]      
-          file_name = '%s/%s-%s-%s.txt' % (OUTDIR, label, mrn, end_date.strftime('%m-%d-%Y'))
+      id = '%s-%s' % (mrn, end_date.strftime('%m-%d-%Y'))
+      label = 'Unknown'
+      if id in labels:
+        label = labels[id]      
+      file_name = '%s/%s/%s.txt' % (OUTDIR, label, id)
       file_names.append(file_name)
   
   return file_names
@@ -105,7 +103,13 @@ def extract_notes(mrn2dates):
       outfile.write(output)
 
 if __name__ == "__main__":
-  
+
+  if os.path.exists(OUTDIR):
+    shutil.rmtree(OUTDIR)
+  os.makedirs(OUTDIR)
+  os.makedirs(OUTDIR + '/Yes')
+  os.makedirs(OUTDIR + '/No')
+
   mrn2dates = map_patients_to_date_ranges()
   write_instance_to_label_map()
   extract_notes(mrn2dates)
