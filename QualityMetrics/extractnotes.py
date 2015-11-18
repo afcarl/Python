@@ -9,10 +9,10 @@ and a DATE_OF_SERVICE in a text file in the output directory.
 Each instance (file) will be mapped to a label.
 """
 
-ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Asthma/Data/data.csv'
-NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/Asthma/severity-notes.csv'
-OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text'
-LABELFILE = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
+ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Data/data.csv'
+NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/severity-notes.csv'
+OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Text'
+LABELFILE = '/Users/dima/Boston/Data/QualityMetrics/labels.txt'
 OK_DATA_REPORTING_TYPES = set(['1', '3'])
 
 def map_patients_to_date_ranges():
@@ -33,6 +33,8 @@ def map_patients_to_date_ranges():
     if line['IS_SEVERITY_DOC_PPM'] == '':
       continue # no label for unknown reason
     date_of_service = datetime.datetime.strptime(line['DATE_OF_SERVICE'], '%m/%d/%y')
+    if date_of_service.month == 8 and date_of_service.year == 2015:
+      continue # harry doesn't have the labeles for these now
     start_date = date_of_service - delta
     if line['MRN'] not in mrn2dates:
       mrn2dates[line['MRN']] = []
@@ -54,12 +56,14 @@ def write_instance_to_label_map():
     if line['IS_SEVERITY_DOC_PPM'] == '':
       continue # no label for unknown reason
     date_of_service = datetime.datetime.strptime(line['DATE_OF_SERVICE'], '%m/%d/%y')
+    if date_of_service.month == 8 and date_of_service.year == 2015:
+      continue # harry doesn't have the labeles for these now
     file_name_no_ext = '%s-%s' % (line['MRN'], date_of_service.strftime('%m-%d-%Y'))
     label = line['IS_SEVERITY_DOC_PPM'] # this is the label, right?
     label_file.write('%s|%s\n' % (file_name_no_ext, label))
 
-def map_date_to_file(mrn2dates, mrn, date):
-  """Map mrn and date to correct patient file"""
+def map_to_file_names(mrn, date, mrn2dates):
+  """Map mrn and note date to correct patient file(s)"""
 
   # could be multiple files for some mrns
   # e.g. '1104576' had two visits several days apart
@@ -96,7 +100,7 @@ def extract_notes(mrn2dates):
     note_text = line['NOTES']
     only_printable = ''.join(c for c in note_text if c in string.printable)
     note_date = datetime.datetime.strptime(line['NOTE_DATE'], '%Y/%m/%d')
-    file_names = map_date_to_file(mrn2dates, line['MRN'], note_date)
+    file_names = map_to_file_names(line['MRN'], note_date, mrn2dates)
     for outfile_name in file_names:
       outfile = open(outfile_name, 'a') 
       output = 'note date: %s\n%s\n' % (line['NOTE_DATE'], only_printable)
