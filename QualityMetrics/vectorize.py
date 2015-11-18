@@ -1,13 +1,13 @@
 #!/usr/bin/python -B 
 import collections, os, csv
 
-DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/Text/'
-LABELS = '/Users/dima/Boston/Data/QualityMetrics/Asthma/labels.txt'
+CLASSDIRS = ['Yes/', 'No/']
+DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Text/'
 STOPWORDS = '/Users/dima/Boston/Data/Misc/stopwords.txt'
 FEATURE2INDEX = './feature2index.txt'
 LABEL2INDEX = './label2index.txt'
 TRAIN = './train.txt'
-MINFREQUENCY = 50
+MINFREQUENCY = 100
 
 def read_stopwords(stopword_file):
   """Read stopwords from a file into a set"""
@@ -50,10 +50,11 @@ def make_alphabet(corpus_path, feature_extractors, stopwords):
   """Do a pass over corpus and map all unique features to dimensions"""
   
   feature_counts = collections.Counter()
-  for file in os.listdir(corpus_path):
-    for feature_extractor in feature_extractors:
-      features = feature_extractor(corpus_path + file, stopwords)
-      feature_counts.update(features)
+  for label in CLASSDIRS:
+    for file in os.listdir(corpus_path + label):
+      for feature_extractor in feature_extractors:
+        features = feature_extractor(corpus_path + label + file, stopwords)
+        feature_counts.update(features)
 
   # libsvm indexes start from 1
   index = 1
@@ -70,46 +71,34 @@ def make_alphabet(corpus_path, feature_extractors, stopwords):
 
   return feature2index
 
-def make_vectors(corpus_path, alphabet, labels, feature_extractors, stopwords):
+def make_vectors(corpus_path, alphabet, feature_extractors, stopwords):
   """Convert documents to vectors"""
 
+  # make label alphabet
+  index = 1
+  label2index = {}
+  label_alphabet_file = open(LABEL2INDEX, 'w')
+  for label in CLASSDIRS:
+    label2index[label] = index
+    label_alphabet_file.write('%s|%s\n' % (label, index))
+    index = index + 1
+  
   training_data = open(TRAIN, 'w')
   
-  for file in os.listdir(corpus_path):
-    vector = []
-    doc_features = []
-    for feature_extractor in feature_extractors:
-      doc_features.extend(feature_extractor(corpus_path + file, stopwords))
-    doc_unique_features = set(doc_features)
-    for feature, index in alphabet.items():
-      if feature in doc_unique_features:
-        vector.append('%s:%s' % (index, 1))
-    
-    # make label alphabet
-    index = 1
-    label2index = {}
-    label_alphabet_file = open(LABEL2INDEX, 'w')
-    for label in set(labels.values()):
-      label2index[label] = index
-      label_alphabet_file.write('%s|%s\n' % (label, index))
-      index = index + 1
+  for label in CLASSDIRS:
+    for file in os.listdir(corpus_path + label):
+      vector = []
+      doc_features = []
+      for feature_extractor in feature_extractors:
+        doc_features.extend(feature_extractor(corpus_path + label + file, stopwords))
+      doc_unique_features = set(doc_features)
+      for feature, index in alphabet.items():
+        if feature in doc_unique_features:
+          vector.append('%s:%s' % (index, 1))
 
-    # output vector
-    document_name_no_extension = file.split('.')[0]
-    label = labels[document_name_no_extension]
-    line = '%s %s\n' % (label2index[label], ' '.join(vector))
-    training_data.write(line)
-
-def load_labels(dsv_file):
-  """Pipe/bar separated file stores the labels"""
-
-  # key: file name (no extension), value: label
-  name2label = {}
-  for line in open(dsv_file):
-    name, label = line.strip().split('|')
-    name2label[name] = label
-
-  return name2label
+      # output vector
+      line = '%s %s\n' % (label2index[label], ' '.join(vector))
+      training_data.write(line)
 
 if __name__ == "__main__":
 
@@ -117,5 +106,4 @@ if __name__ == "__main__":
 
   stopwords = read_stopwords(STOPWORDS)
   alphabet = make_alphabet(DOCUMENTS, feature_extractors, stopwords)
-  labels = load_labels(LABELS)
-  make_vectors(DOCUMENTS, alphabet, labels, feature_extractors, stopwords)
+  make_vectors(DOCUMENTS, alphabet, feature_extractors, stopwords)
