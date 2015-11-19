@@ -1,13 +1,14 @@
 #!/usr/bin/python -B 
 import collections, os, csv
 
+WORDLIST = set(['asthma'])
 CLASSDIRS = ['Yes/', 'No/']
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Text/'
 STOPWORDS = '/Users/dima/Boston/Data/Misc/stopwords.txt'
 FEATURE2INDEX = './feature2index.txt'
 LABEL2INDEX = './label2index.txt'
 TRAIN = './train.txt'
-MINFREQUENCY = 3
+MINFREQUENCY = 5
 
 def read_stopwords(stopword_file):
   """Read stopwords from a file into a set"""
@@ -32,7 +33,7 @@ def read_unigrams(file, stopwords):
       
   return unigrams
 
-def read_bigrams(file, stopwords):
+def read_bigrams(file, stopwords, word_list = WORDLIST):
   """Return a file as a list of bi-grams"""
 
   bigrams = []
@@ -41,7 +42,15 @@ def read_bigrams(file, stopwords):
   alpha_words = [word for word in words if word.isalpha()]
   no_junk = [word for word in alpha_words if word not in stopwords]
   for i in range(len(no_junk) - 1):
-    bigram = '%s_%s' % (no_junk[i], no_junk[i+1])
+    if len(word_list) == 0:
+      # include all bigrams
+      bigram = '%s_%s' % (no_junk[i], no_junk[i+1])
+    else:
+      # include only bigrams where one of the words is in word list
+      if (no_junk[i] in word_list) or (no_junk[i+1] in word_list):
+        bigram = '%s_%s' % (no_junk[i], no_junk[i+1])
+      else:
+        continue
     bigrams.append(bigram)
 
   return bigrams
