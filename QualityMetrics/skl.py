@@ -11,8 +11,10 @@ NOTES = '/Users/dima/Boston/Data/QualityMetrics/Text'
 def main():
   """ """      
 
-  bunch = sklearn.datasets.load_files(NOTES)
-  
+  # bunch = sklearn.datasets.load_files(NOTES)
+  categories = ['alt.atheism', 'soc.religion.christian', 'comp.graphics', 'sci.med']
+  bunch = sklearn.datasets.fetch_20newsgroups(subset='train', categories=categories)
+
   # raw occurences
   vectorizer = sklearn.feature_extraction.text.CountVectorizer()
   counts = vectorizer.fit_transform(bunch.data)
