@@ -1,14 +1,14 @@
 #!/usr/bin/python -B 
 import collections, os, csv
 
-WORDLIST = set(['asthma'])
+WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent'])
 CLASSDIRS = ['Yes/', 'No/']
 DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Text/'
 STOPWORDS = '/Users/dima/Boston/Data/Misc/stopwords.txt'
 FEATURE2INDEX = './feature2index.txt'
 LABEL2INDEX = './label2index.txt'
 TRAIN = './train.txt'
-MINFREQUENCY = 5
+MINFREQUENCY = 100
 
 def read_stopwords(stopword_file):
   """Read stopwords from a file into a set"""
@@ -110,7 +110,7 @@ def make_vectors(corpus_path, alphabet, feature_extractors, stopwords):
 
 if __name__ == "__main__":
 
-  feature_extractors = [read_unigrams, read_bigrams]
+  feature_extractors = [read_bigrams]
 
   stopwords = read_stopwords(STOPWORDS)
   alphabet = make_alphabet(DOCUMENTS, feature_extractors, stopwords)
