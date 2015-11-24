@@ -1,10 +1,5 @@
 #!/usr/bin/python -B
 
-"""
-It seems like counts rather than tfidf work better. 
-Also check out 'binary=True' option to count vectorizer. Might work better.
-"""
-
 import sklearn as sk
 import numpy as np
 import sklearn.datasets
@@ -14,7 +9,9 @@ import sklearn.naive_bayes
 import sklearn.svm
 
 NOTES = '/Users/dima/Boston/Data/QualityMetrics/Balanced/'
-WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent'])
+WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent', 'moderate'])
+VOCABULARY = ['severe asthma', 'persistent asthma', 'mild asthma', 'intermittent asthma', 'moderate asthma',
+              'mild persistent', 'mild intermittent', 'moderate persistent', 'severe persistent']
 NFOLDS = 5
 
 # one, two, three, four, five, six, seven, eight, nine
@@ -52,6 +49,8 @@ def main():
     ngram_range=(2, 2), 
     stop_words='english',
     min_df=50,
+    vocabulary=None,
+    binary=False,
     preprocessor=keyword_contexts)  
   counts = vectorizer.fit_transform(bunch.data)
   
