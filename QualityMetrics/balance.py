@@ -1,11 +1,38 @@
 #!/usr/bin/python -B
 
-import random
+import random, shutil, os, os.path
 
-INFILE = 'train.txt'
-OUTFILE = 'balanced.txt'
+DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Text/'
+BALANCED = '/Users/dima/Boston/Data/QualityMetrics/Balanced/'
+INFILE = './train.txt'
+OUTFILE = './balanced.txt'
 
-def balance():
+def balance_training_files():
+  """Ensure each class has same number of files"""
+
+  # find number of files in smallest subdir
+  smallest_size = 100000
+  for subdir in os.listdir(DOCUMENTS):
+    size = len(os.listdir(os.path.join(DOCUMENTS, subdir)))
+    if size < smallest_size:
+      smallest_size = size
+
+  # create directory structure
+  if os.path.exists(BALANCED):
+    shutil.rmtree(BALANCED)
+  os.makedirs(BALANCED)
+  os.makedirs(os.path.join(BALANCED, 'Yes'))
+  os.makedirs(os.path.join(BALANCED, 'No'))
+
+  # make sure each subdir has same number of files
+  for subdir in os.listdir(DOCUMENTS):
+    files = os.listdir(os.path.join(DOCUMENTS, subdir))
+    for file in random.sample(files, smallest_size):
+      source = os.path.join(DOCUMENTS, subdir, file)
+      target = os.path.join(BALANCED, subdir)
+      shutil.copy(source, target)
+
+def balance_libsvm_data():
   """Balance a training set"""      
 
   # key: label, value: list of vectors
@@ -22,7 +49,7 @@ def balance():
     
   # find label with smallest number of examples
   smallest_label = ''
-  smallest_size = 10000000
+  smallest_size = 1000000
   for label, vectors in data.items():
     if len(vectors) < smallest_size:
       smallest_size = len(vectors)
@@ -37,4 +64,4 @@ def balance():
   
 if __name__ == "__main__":
 
-  balance()
+  balance_training_files()
