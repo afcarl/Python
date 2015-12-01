@@ -1,9 +1,5 @@
 #!/usr/bin/python -B
 
-"""
-Bigrams + mind_df = 100 seems to work well with no preprocessing.
-"""
-
 import sklearn as sk
 import numpy as np
 import sklearn.datasets
@@ -12,7 +8,7 @@ import sklearn.cross_validation
 import sklearn.naive_bayes
 import sklearn.svm
 
-NOTES = '/Users/dima/Boston/Data/QualityMetrics/Balanced/'
+NOTES = ''
 WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent', 'moderate'])
 VOCABULARY = ['severe asthma', 'persistent asthma', 'mild asthma', 'intermittent asthma', 'moderate asthma',
               'mild persistent', 'mild intermittent', 'moderate persistent', 'severe persistent']
