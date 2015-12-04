@@ -1,7 +1,6 @@
 #!/usr/bin/python -B 
 import csv, datetime
 
-ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Asthma/Data/data.csv'
 OK_DATA_REPORTING_TYPES = set(['1', '3'])
 
 def severity_score_patients():

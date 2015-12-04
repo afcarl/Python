@@ -9,9 +9,6 @@ and a DATE_OF_SERVICE in a text file in the output directory.
 Each instance (file) will be mapped to a label.
 """
 
-ASTHMACSV = '/Users/dima/Boston/QualityMetrics/Data/data.csv'
-NOTECSV = '/Users/dima/Boston/Data/QualityMetrics/severity-notes.csv'
-OUTDIR = '/Users/dima/Boston/Data/QualityMetrics/Text'
 OK_DATA_REPORTING_TYPES = set(['1', '3'])
 
 def map_patients_to_date_ranges():

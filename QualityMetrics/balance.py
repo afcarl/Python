@@ -2,8 +2,6 @@
 
 import random, shutil, os, os.path
 
-DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Text/'
-BALANCED = '/Users/dima/Boston/Data/QualityMetrics/Balanced/'
 INFILE = './train.txt'
 OUTFILE = './balanced.txt'
 

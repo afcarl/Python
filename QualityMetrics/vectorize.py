@@ -3,7 +3,6 @@ import collections, os, csv
 
 WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent'])
 CLASSDIRS = ['Yes/', 'No/']
-DOCUMENTS = '/Users/dima/Boston/Data/QualityMetrics/Text/'
 STOPWORDS = '/Users/dima/Boston/Data/Misc/stopwords.txt'
 FEATURE2INDEX = './feature2index.txt'
 LABEL2INDEX = './label2index.txt'
