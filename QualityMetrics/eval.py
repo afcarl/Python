@@ -38,10 +38,10 @@ def keyword_contexts(document):
 
   return ' '.join(selected_words)
 
-def main():
-  """ """      
+def run_cross_validation(notes_dir):
+  """Run n-fold CV and return average accuracy"""      
 
-  bunch = sk.datasets.load_files(locations.NOTES)
+  bunch = sk.datasets.load_files(notes_dir)
 
   # raw occurences
   vectorizer = sk.feature_extraction.text.CountVectorizer(
@@ -78,4 +78,4 @@ def main():
 
 if __name__ == "__main__":
 
-  main()
+  run_cross_validation(locations.BALANCED)
