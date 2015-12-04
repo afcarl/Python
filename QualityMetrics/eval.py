@@ -7,11 +7,12 @@ import sklearn.feature_extraction.text
 import sklearn.cross_validation
 import sklearn.naive_bayes
 import sklearn.svm
+import locations
 
-NOTES = ''
 WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent', 'moderate'])
-VOCABULARY = ['severe asthma', 'persistent asthma', 'mild asthma', 'intermittent asthma', 'moderate asthma',
-              'mild persistent', 'mild intermittent', 'moderate persistent', 'severe persistent']
+VOCABULARY = ['severe asthma', 'persistent asthma', 'mild asthma', 
+              'intermittent asthma', 'moderate asthma', 'mild persistent', 
+              'mild intermittent', 'moderate persistent', 'severe persistent']
 NFOLDS = 5
 NGRAMRANGE = (2, 2)
 MINDF = 50
@@ -40,7 +41,7 @@ def keyword_contexts(document):
 def main():
   """ """      
 
-  bunch = sk.datasets.load_files(NOTES)
+  bunch = sk.datasets.load_files(locations.NOTES)
 
   # raw occurences
   vectorizer = sk.feature_extraction.text.CountVectorizer(
