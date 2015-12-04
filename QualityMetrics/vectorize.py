@@ -1,5 +1,5 @@
 #!/usr/bin/python -B 
-import collections, os, csv
+import collections, os, csv, locations
 
 WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent'])
 CLASSDIRS = ['Yes/', 'No/']
@@ -112,5 +112,5 @@ if __name__ == "__main__":
   feature_extractors = [read_bigrams]
 
   stopwords = read_stopwords(STOPWORDS)
-  alphabet = make_alphabet(DOCUMENTS, feature_extractors, stopwords)
-  make_vectors(DOCUMENTS, alphabet, feature_extractors, stopwords)
+  alphabet = make_alphabet(locations.BALANCED, feature_extractors, stopwords)
+  make_vectors(locations.BALANCED, alphabet, feature_extractors, stopwords)
