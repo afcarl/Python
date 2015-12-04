@@ -13,6 +13,7 @@ WORDLIST = set(['severe', 'persistent', 'mild', 'intermittent', 'moderate'])
 VOCABULARY = ['severe asthma', 'persistent asthma', 'mild asthma', 
               'intermittent asthma', 'moderate asthma', 'mild persistent', 
               'mild intermittent', 'moderate persistent', 'severe persistent']
+FEATUREFILE = './features.txt'
 NFOLDS = 5
 NGRAMRANGE = (2, 2)
 MINDF = 50
@@ -53,8 +54,8 @@ def run_cross_validation(notes_dir):
     preprocessor=keyword_contexts)  
   count_matrix = vectorizer.fit_transform(bunch.data)
   
-  # print features to file
-  feature_file = open('features.txt', 'w')
+  # print features to file for debugging
+  feature_file = open(FEATUREFILE, 'w')
   for feature in vectorizer.get_feature_names():
     feature_file.write(feature + '\n')
   
