@@ -69,8 +69,10 @@ def main():
     train_y = bunch.target[train_indices]
     test_x = tfidf_matrix[test_indices]
     test_y = bunch.target[test_indices]
-    classifier = sk.svm.LinearSVC().fit(train_x, train_y)
-    scores.append(classifier.score(test_x, test_y))
+    classifier = sk.svm.LinearSVC()
+    model = classifier.fit(train_x, train_y)
+    accuracy = classifier.score(test_x, test_y)
+    scores.append(accuracy)
   
   print np.mean(scores)
 
