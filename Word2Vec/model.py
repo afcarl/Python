@@ -41,6 +41,6 @@ if __name__ == "__main__":
   model = Model(path)
   model.load()
 
-  average = model.average_words(['clubbed', 'wanning'])
+  average = model.average_words(['intrathoric', 'clubbed', 'wanning'])
   print average
   
