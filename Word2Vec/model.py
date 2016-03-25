@@ -1,6 +1,6 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
-import numpy
+import numpy, os, os.path
 
 class Model:
   """Represents a word2vec model"""
@@ -32,15 +32,28 @@ class Model:
 
     sum = numpy.zeros(self.dimensions)
     for word in words:
-      sum = sum + self.vectors[word]
+      if word in self.vectors:
+        sum = sum + self.vectors[word]
+
     return sum / len(words)
-        
+
+  def words_to_vectors(self, infile, outfile):
+    """Convert text from infile to vectors and save in outfile"""
+
+    matrix = []
+    with open(infile) as file:
+      for line in file:
+        average = self.average_words(line.split())
+        matrix.append(list(average))
+
+    numpy.savetxt(outfile, numpy.array(matrix))
+      
 if __name__ == "__main__":
 
   path = '/Users/Dima/Boston/Vectors/Models/mimic.txt'
   model = Model(path)
   model.load()
 
-  average = model.average_words(['intrathoric', 'clubbed', 'wanning'])
-  print average
-  
+  data = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata/'
+  model.words_to_vectors(os.path.join(data, 'rt-polarity.neg'), 'neg.txt')
+  model.words_to_vectors(os.path.join(data, 'rt-polarity.pos'), 'pos.txt')

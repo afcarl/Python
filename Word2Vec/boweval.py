@@ -10,7 +10,7 @@ from sklearn.datasets.base import Bunch
 import os, os.path, string
 
 PATH = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata'
-NFOLDS = 5
+NFOLDS = 10
 NGRAMRANGE = (1, 1)
 MINDF = 0
 
@@ -42,7 +42,7 @@ def run_cross_validation():
     binary=False,
     preprocessor=None)  
   count_matrix = vectorizer.fit_transform(bunch.data)
-  
+
   # tf-idf 
   tf = sk.feature_extraction.text.TfidfTransformer()
   tfidf_matrix = tf.fit_transform(count_matrix)
