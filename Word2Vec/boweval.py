@@ -6,16 +6,32 @@ import sklearn.datasets
 import sklearn.feature_extraction.text
 import sklearn.cross_validation
 import sklearn.svm
+from sklearn.datasets.base import Bunch
+import os, os.path, string
 
-DATADIR = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata'
+PATH = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata'
 NFOLDS = 5
 NGRAMRANGE = (1, 1)
 MINDF = 0
 
+def make_bunch():
+  """Make a Bunch object from raw data"""
+  
+  samples = []
+  labels = []
+  for file_name in os.listdir(PATH):
+    with open(os.path.join(PATH, file_name)) as file:
+      for line in file:
+        printable = ''.join(c for c in line if c in string.printable)
+        samples.append(printable.strip())
+        labels.append(file_name.split('.')[1])
+
+  return Bunch(data=np.array(samples), target=np.array(labels))
+
 def run_cross_validation():
   """Run n-fold CV and return average accuracy"""      
 
-  bunch = sk.datasets.load_files(DATADIR)
+  bunch = make_bunch()
 
   # raw occurences
   vectorizer = sk.feature_extraction.text.CountVectorizer(
