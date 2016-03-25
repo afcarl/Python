@@ -19,7 +19,7 @@ class Model:
     with open(self.path) as file:
       for line in file:
         elements = line.strip().split()
-        if len(elements) < 3: # parse header
+        if len(elements) < 5: # parse header
           self.count = int(elements[0])
           self.dimensions = int(elements[1])
           continue
@@ -50,9 +50,10 @@ class Model:
       
 if __name__ == "__main__":
 
-  path = '/Users/Dima/Boston/Vectors/Models/mimic.txt'
+  path = '/Users/Dima/Loyola/Data/Word2Vec/Models/GoogleNews-vectors-negative300.txt'
   model = Model(path)
   model.load()
+  print 'model loaded'
 
   data = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata/'
   model.words_to_vectors(os.path.join(data, 'rt-polarity.neg'), 'neg.txt')

@@ -9,7 +9,7 @@ import sklearn.svm
 from sklearn.datasets.base import Bunch
 import os, os.path, string
 
-PATH = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata'
+PATH = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata/'
 NFOLDS = 10
 NGRAMRANGE = (1, 1)
 MINDF = 0
