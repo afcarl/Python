@@ -55,7 +55,7 @@ def run_cross_validation():
     test_x = tfidf_matrix[test_indices]
     test_y = bunch.target[test_indices]
     classifier = sk.svm.LinearSVC()
-    model = classifier.fit(train_x, train_y)
+    classifier.fit(train_x, train_y)
     accuracy = classifier.score(test_x, test_y)
     scores.append(accuracy)
   
