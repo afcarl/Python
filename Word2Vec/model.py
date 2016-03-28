@@ -8,15 +8,11 @@ class Model:
   def __init__(self, path):
     """Initiaize from a word2vec model file"""
                 
-    self.path = path
     self.count = None      # number of vectors
     self.dimensions = None # number of dimensions
-    self.vectors = {}      # key: word, value: vector
+    self.vectors = {}      # key: word, value: numpy vector
         
-  def load(self):
-    """Load word2vec model file into memory"""
-
-    with open(self.path) as file:
+    with open(path) as file:
       for line in file:
         elements = line.strip().split()
         if len(elements) < 5: # parse header
@@ -30,15 +26,20 @@ class Model:
   def average_words(self, words):
     """Compute average vector for a list of words"""
 
+    words_found = 0 # words in vocabulary
     sum = numpy.zeros(self.dimensions)
     for word in words:
       if word in self.vectors:
         sum = sum + self.vectors[word]
+        words_found = words_found + 1
 
-    return sum / len(words)
+    if words_found == 0:
+      return sum
+    else:
+      return sum / words_found
 
   def words_to_vectors(self, infile, outfile):
-    """Convert text from infile to vectors and save in outfile"""
+    """Convert texts from infile to vectors and save in outfile"""
 
     matrix = []
     with open(infile) as file:
@@ -52,8 +53,6 @@ if __name__ == "__main__":
 
   path = '/Users/Dima/Loyola/Data/Word2Vec/Models/GoogleNews-vectors-negative300.txt'
   model = Model(path)
-  model.load()
-  print 'model loaded'
 
   data = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata/'
   model.words_to_vectors(os.path.join(data, 'rt-polarity.neg'), 'neg.txt')

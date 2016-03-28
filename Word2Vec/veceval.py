@@ -18,7 +18,7 @@ if __name__ == "__main__":
   labels = np.array(pos_labels + neg_labels)
   
   scores = []
-  folds = sk.cross_validation.KFold(len(examples), n_folds=NFOLDS)
+  folds = sk.cross_validation.KFold(len(labels), n_folds=NFOLDS)
 
   for train_indices, test_indices in folds:
     train_x = examples[train_indices]
