@@ -4,10 +4,11 @@ import numpy as np
 import sklearn as sk
 import sklearn.cross_validation
 import os, os.path
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation
-from keras.layers.normalization import BatchNormalization
-from keras.utils import np_utils
+
+import keras as k
+import keras.models
+import keras.layers.core
+import keras.utils.np_utils
 
 NFOLDS = 10
 BATCH = 32
@@ -17,7 +18,7 @@ DIMENSIONS = 300
 
 if __name__ == "__main__":
 
-  np.random.seed(1337)  # for reproducibility
+  np.random.seed(1337) 
   
   pos_examples = np.loadtxt('pos.txt')
   pos_labels = [1] * pos_examples.shape[0]
@@ -25,7 +26,7 @@ if __name__ == "__main__":
   neg_labels = [0] * neg_examples.shape[0]
   examples = np.vstack((pos_examples, neg_examples))
   labels = np.array(pos_labels + neg_labels)
-  labels_one_hot = np_utils.to_categorical(labels, CLASSES)
+  labels_one_hot = k.utils.np_utils.to_categorical(labels, CLASSES)
 
   scores = []
   folds = sk.cross_validation.KFold(len(labels), n_folds=NFOLDS)
@@ -36,12 +37,12 @@ if __name__ == "__main__":
     test_x = examples[test_indices]
     test_y = labels_one_hot[test_indices]
 
-    model = Sequential()
-    model.add(Dense(512, input_shape=(DIMENSIONS,)))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(CLASSES))
-    model.add(Activation('softmax'))
+    model = k.models.Sequential()
+    model.add(k.layers.core.Dense(512, input_shape=(DIMENSIONS,)))
+    model.add(k.layers.core.Activation('relu'))
+    model.add(k.layers.core.Dropout(0.5))
+    model.add(k.layers.core.Dense(CLASSES))
+    model.add(k.layers.core.Activation('softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam')
     history = model.fit(train_x, train_y,
