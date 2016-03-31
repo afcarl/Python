@@ -38,9 +38,16 @@ if __name__ == "__main__":
     test_y = labels_one_hot[test_indices]
 
     model = k.models.Sequential()
-    model.add(k.layers.core.Dense(512, input_shape=(DIMENSIONS,)))
+
+    # 512 originally
+    model.add(k.layers.core.Dense(128, input_shape=(DIMENSIONS,)))
     model.add(k.layers.core.Activation('relu'))
-    model.add(k.layers.core.Dropout(0.5))
+    model.add(k.layers.core.Dropout(0.3))
+
+    model.add(k.layers.core.Dense(128))
+    model.add(k.layers.core.Activation('relu'))
+    model.add(k.layers.core.Dropout(0.3))
+
     model.add(k.layers.core.Dense(CLASSES))
     model.add(k.layers.core.Activation('softmax'))
 
