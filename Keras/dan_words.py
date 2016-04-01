@@ -3,44 +3,51 @@
 import numpy as np
 import sklearn as sk
 import sklearn.cross_validation
+import sklearn.feature_extraction.text
 import os, os.path
-
 import keras as k
 import keras.models
 import keras.layers.core
 import keras.utils.np_utils
+import svm_words
 
 NFOLDS = 10
 BATCH = 32
 EPOCHS = 5
 CLASSES = 2
 DIMENSIONS = 300
+NGRAMRANGE = (1, 1)
+MINDF = 0
 
 if __name__ == "__main__":
 
   np.random.seed(1337) 
-  
-  pos_examples = np.loadtxt('pos.txt')
-  pos_labels = [1] * pos_examples.shape[0]
-  neg_examples = np.loadtxt('neg.txt')
-  neg_labels = [0] * neg_examples.shape[0]
-  examples = np.vstack((pos_examples, neg_examples))
-  labels = np.array(pos_labels + neg_labels)
-  labels_one_hot = k.utils.np_utils.to_categorical(labels, CLASSES)
 
+  bunch = svm_words.make_bunch()
+
+  vectorizer = sk.feature_extraction.text.CountVectorizer(
+    ngram_range=NGRAMRANGE, min_df=MINDF)
+  count_matrix = vectorizer.fit_transform(bunch.data)
+
+  labels = np.array(bunch.target)
+  labels[labels == 'neg'] = 0
+  labels[labels == 'pos'] = 1
+  
+  labels_one_hot = k.utils.np_utils.to_categorical(labels, CLASSES)
+  # [np.nonzero(row)[0].tolist() for row in count_matrix.toarray()][1]
+  
   scores = []
   folds = sk.cross_validation.KFold(len(labels), n_folds=NFOLDS)
 
   for train_indices, test_indices in folds:
-    train_x = examples[train_indices]
+    train_x = count_matrix[train_indices].toarray()
     train_y = labels_one_hot[train_indices]
-    test_x = examples[test_indices]
+    test_x = count_matrix[test_indices].toarray()
     test_y = labels_one_hot[test_indices]
 
     model = k.models.Sequential()
 
-    # 512 originally
-    model.add(k.layers.core.Dense(128, input_shape=(DIMENSIONS,)))
+    model.add(k.layers.core.Dense(128, input_shape=(train_x.shape[1],)))
     model.add(k.layers.core.Activation('relu'))
     model.add(k.layers.core.Dropout(0.3))
 
