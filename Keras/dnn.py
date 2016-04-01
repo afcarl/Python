@@ -1,5 +1,9 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
+"""
+Deep NN with BOW input. Ten-fold CV accuracy is 0.7257.
+"""
+
 import numpy as np
 import sklearn as sk
 import sklearn.cross_validation
@@ -15,8 +19,6 @@ NFOLDS = 10
 BATCH = 32
 EPOCHS = 5
 CLASSES = 2
-DIMENSIONS = 300
-NGRAMRANGE = (1, 1)
 MINDF = 0
 
 if __name__ == "__main__":
@@ -25,8 +27,7 @@ if __name__ == "__main__":
 
   bunch = svm_words.make_bunch()
 
-  vectorizer = sk.feature_extraction.text.CountVectorizer(
-    ngram_range=NGRAMRANGE, min_df=MINDF)
+  vectorizer = sk.feature_extraction.text.CountVectorizer(min_df=MINDF)
   count_matrix = vectorizer.fit_transform(bunch.data)
 
   labels = np.array(bunch.target)
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     train_y = labels_one_hot[train_indices]
     test_x = count_matrix[test_indices].toarray()
     test_y = labels_one_hot[test_indices]
-
+    
     model = k.models.Sequential()
 
     model.add(k.layers.core.Dense(128, input_shape=(train_x.shape[1],)))
