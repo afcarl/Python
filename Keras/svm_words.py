@@ -41,8 +41,12 @@ def run_cross_validation():
     min_df=MINDF ,
     vocabulary=None,
     binary=False,
-    preprocessor=None)  
+    preprocessor=None)
   count_matrix = vectorizer.fit_transform(bunch.data)
+
+  for i in sorted(vectorizer.vocabulary_.values()):
+    v = vectorizer.vocabulary_.keys()[vectorizer.vocabulary_.values().index(i)]
+    print i, '-', v
 
   # tf-idf 
   tf = sk.feature_extraction.text.TfidfTransformer()
