@@ -52,7 +52,7 @@ if __name__ == "__main__":
     model.add(k.layers.core.Activation('softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam')
-    history = model.fit(train_x, train_y,
+    model.fit(train_x, train_y,
                         nb_epoch=EPOCHS, batch_size=BATCH, verbose=0,
                         show_accuracy=True, validation_split=0.1)
     score = model.evaluate(test_x, test_y,
