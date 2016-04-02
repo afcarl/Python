@@ -1,6 +1,6 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
-import glob, string
+import glob, string, collections, operator
 
 PATH = '/Users/Dima/Loyola/Data/RtPolarity/rt-polarity.*'
 
@@ -20,18 +20,14 @@ class Dataset:
         printable = ''.join(c for c in line if c in string.printable)
         unigrams.extend(printable.split())
 
-    print len(set(unigrams))
+    alphabet = {} # key: unigram, value: index
+    index = 1     # zero used to encode unknown words
+    unigram_counts = collections.Counter(unigrams)
+    for unigram, count in unigram_counts.most_common():
+      alphabet[unigram] = index
+      index = index + 1
 
-  def read_unigrams(self, file_name):
-    """Return a file as a list of words"""
-    
-    unigrams = []
-    with open(file_name) as file:
-      for line in file:
-        printable = ''.join(c for c in line if c in string.printable)
-        unigrams.extend(printable.split())
-
-    return unigrams
+    return alphabet
 
 if __name__ == "__main__":
 
