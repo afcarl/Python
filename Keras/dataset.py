@@ -28,18 +28,18 @@ class Dataset:
       index = index + 1
 
   def get_examples(self):
-    """Indices instead of words"""
+    """Convert sentences (examples) into lists of indices"""
 
-    all_examples = []
+    examples = []
     for file_name in glob.glob(PATH):
       for line in open(file_name):
-        one_example = []
+        example = []
         printable = ''.join(c for c in line if c in string.printable)
         for unigram in printable.split():
-          one_example.append(self.alphabet[unigram])
-        all_examples.append(one_example)
+          example.append(self.alphabet[unigram])
+        examples.append(example)
 
-    return all_examples
+    return examples
 
 if __name__ == "__main__":
 
