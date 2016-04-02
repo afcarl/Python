@@ -7,9 +7,9 @@ import sklearn.feature_extraction.text
 import sklearn.cross_validation
 import sklearn.svm
 from sklearn.datasets.base import Bunch
-import os, os.path, string
+import glob, string
 
-PATH = '/Users/Dima/Soft/CnnBritz/cnn-text-classification-tf/data/rt-polaritydata/'
+PATH = '/Users/Dima/Loyola/Data/RtPolarity/rt-polarity.*'
 NFOLDS = 10
 NGRAMRANGE = (1, 1)
 MINDF = 0
@@ -19,8 +19,9 @@ def make_bunch():
   
   samples = []
   labels = []
-  for file_name in os.listdir(PATH):
-    with open(os.path.join(PATH, file_name)) as file:
+  for file_name in glob.glob(PATH):
+    print 'reading:', file_name
+    with open(file_name) as file:
       for line in file:
         printable = ''.join(c for c in line if c in string.printable)
         samples.append(printable.strip())
@@ -59,7 +60,7 @@ def run_cross_validation():
     accuracy = classifier.score(test_x, test_y)
     scores.append(accuracy)
   
-  print np.mean(scores)
+  print 'accuracy:', np.mean(scores)
 
 if __name__ == "__main__":
 
