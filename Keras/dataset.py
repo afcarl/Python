@@ -8,12 +8,9 @@ class Dataset:
   """Interface to RT sentiment data"""
   
   def __init__(self):
-    """ """
+    """Index words by overall frequency in the dataset"""
 
-    self.alphabet = {} # key: unigram, value: index
-
-  def make_alphabet(self):
-    """Words indexed by overall frequency in the dataset"""
+    self.alphabet = {} # words indexed by frequency
 
     unigrams = []
     for file_name in glob.glob(PATH):
@@ -27,10 +24,11 @@ class Dataset:
       self.alphabet[unigram] = index
       index = index + 1
 
-  def get_examples(self):
+  def load_data(self):
     """Convert sentences (examples) into lists of indices"""
 
     examples = []
+    labels = []
     for file_name in glob.glob(PATH):
       for line in open(file_name):
         example = []
@@ -38,12 +36,12 @@ class Dataset:
         for unigram in printable.split():
           example.append(self.alphabet[unigram])
         examples.append(example)
+        labels.append(file_name.split('.')[1])
 
-    return examples
+    return examples, labels
 
 if __name__ == "__main__":
 
   dataset = Dataset()
-  dataset.make_alphabet()
-  examples = dataset.get_examples()
-  print examples[6]
+  x,y = dataset.load_data()
+  print x[50]
