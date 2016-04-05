@@ -43,7 +43,7 @@ class Dataset:
 
 if __name__ == "__main__":
 
-  dataset = Dataset(5)
+  dataset = Dataset(max_features=5)
   print 'vocabulary size:', len(dataset.alphabet)
   x,y = dataset.load_data()
   print x[600], y[600]

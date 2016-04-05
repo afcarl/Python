@@ -12,7 +12,7 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.embeddings import Embedding
 
-NFOLDS = 5
+NFOLDS = 10
 BATCH = 32
 EPOCHS = 5
 CLASSES = 2
@@ -38,6 +38,7 @@ if __name__ == "__main__":
   folds = sk.cross_validation.KFold(len(labels), n_folds=NFOLDS)
 
   for train_indices, test_indices in folds:
+    print 'starting new fold...'
     train_x = x[train_indices]
     train_y = labels_one_hot[train_indices]
     test_x = x[test_indices]
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     
     model = k.models.Sequential()
 
-    model.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
+    model.add(Embedding(MAXFEATURES + 1, EMBDIMS, input_length=MAXLEN))
     model.add(Flatten()) # not sure what this is...
     
     model.add(Dense(128))
