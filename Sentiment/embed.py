@@ -3,59 +3,61 @@
 import numpy as np
 import sklearn as sk
 import sklearn.cross_validation
-import sklearn.feature_extraction.text
-import os, os.path
 import keras as k
-import keras.models
-import keras.layers.core
-import keras.layers.embeddings
 import keras.utils.np_utils
 import dataset
 
-NFOLDS = 10
+from keras.preprocessing import sequence
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation, Flatten
+from keras.layers.embeddings import Embedding
+
+NFOLDS = 5
 BATCH = 32
 EPOCHS = 5
 CLASSES = 2
-MINDF = 0
 EMBDIMS = 100
 MAXLEN = 100
+MAXFEATURES = 5000
 
 if __name__ == "__main__":
 
   np.random.seed(1337) 
-  dataset = dataset.Dataset()
-  dataset.make_alphabet()
-  examples = np.array(dataset.as_indices())
-  pos_labels = [1] * (len(examples) / 2)
-  neg_labels = [0] * (len(examples) / 2)
-  labels = pos_labels + neg_labels
-  labels_one_hot = k.utils.np_utils.to_categorical(np.array(labels), CLASSES)  
-  
+  dataset = dataset.Dataset(MAXFEATURES)
+  print 'vocab size:', len(dataset.alphabet)
+  x, y = dataset.load_data()
+
+  pos_labels = [1] * (len(y) / 2)
+  neg_labels = [0] * (len(y) / 2)
+  labels = np.array(pos_labels + neg_labels)
+  labels_one_hot = k.utils.np_utils.to_categorical(labels, CLASSES)  
+
+  x = sequence.pad_sequences(x, maxlen=MAXLEN)
+
   scores = []
   folds = sk.cross_validation.KFold(len(labels), n_folds=NFOLDS)
 
   for train_indices, test_indices in folds:
-    train_x = examples[train_indices]
+    train_x = x[train_indices]
     train_y = labels_one_hot[train_indices]
-    test_x = examples[test_indices]
+    test_x = x[test_indices]
     test_y = labels_one_hot[test_indices]
     
     model = k.models.Sequential()
 
-    model.add(k.layers.embeddings.Embedding(len(dataset.alphabet),
-                                            EMBDIMS, input_length=None))
-    # model.add(k.layers.core.Dropout(0.25))
+    model.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
+    model.add(Flatten()) # not sure what this is...
     
-    model.add(k.layers.core.Dense(1128))
-    model.add(k.layers.core.Activation('relu'))
-    model.add(k.layers.core.Dropout(0.3))
+    model.add(Dense(128))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.3))
 
-    model.add(k.layers.core.Dense(128))
-    model.add(k.layers.core.Activation('relu'))
-    model.add(k.layers.core.Dropout(0.3))
+    model.add(Dense(128))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.3))
 
-    model.add(k.layers.core.Dense(CLASSES))
-    model.add(k.layers.core.Activation('softmax'))
+    model.add(Dense(CLASSES))
+    model.add(Activation('softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam')
     history = model.fit(train_x, train_y,

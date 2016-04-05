@@ -44,6 +44,6 @@ class Dataset:
 if __name__ == "__main__":
 
   dataset = Dataset(5)
-  print 'alphabet:', dataset.alphabet
+  print 'vocabulary size:', len(dataset.alphabet)
   x,y = dataset.load_data()
-  print x[55]
+  print x[600], y[600]
