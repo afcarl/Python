@@ -10,44 +10,40 @@ import keras.models
 import keras.layers.core
 import keras.layers.embeddings
 import keras.utils.np_utils
-import svm_words
+import dataset
 
 NFOLDS = 10
 BATCH = 32
 EPOCHS = 5
 CLASSES = 2
 MINDF = 0
-DIMENSIONS = 100
+EMBDIMS = 100
+MAXLEN = 100
 
 if __name__ == "__main__":
 
   np.random.seed(1337) 
-  bunch = svm_words.make_bunch()
-
-  vectorizer = sk.feature_extraction.text.CountVectorizer(min_df=MINDF)
-  count_matrix = vectorizer.fit_transform(bunch.data)
-  seqs = [np.nonzero(row)[0].tolist() for row in count_matrix.toarray()]
-  sequences = np.array(seqs)
-
-  labels = np.array(bunch.target)
-  labels[labels == 'neg'] = 0
-  labels[labels == 'pos'] = 1
-  
-  labels_one_hot = k.utils.np_utils.to_categorical(labels, CLASSES)
+  dataset = dataset.Dataset()
+  dataset.make_alphabet()
+  examples = np.array(dataset.as_indices())
+  pos_labels = [1] * (len(examples) / 2)
+  neg_labels = [0] * (len(examples) / 2)
+  labels = pos_labels + neg_labels
+  labels_one_hot = k.utils.np_utils.to_categorical(np.array(labels), CLASSES)  
   
   scores = []
   folds = sk.cross_validation.KFold(len(labels), n_folds=NFOLDS)
 
   for train_indices, test_indices in folds:
-    train_x = sequences[train_indices]
+    train_x = examples[train_indices]
     train_y = labels_one_hot[train_indices]
-    test_x = sequences[test_indices]
+    test_x = examples[test_indices]
     test_y = labels_one_hot[test_indices]
     
     model = k.models.Sequential()
 
-    model.add(k.layers.embeddings.Embedding(count_matrix.shape[1],
-                                            DIMENSIONS, input_length=100))
+    model.add(k.layers.embeddings.Embedding(len(dataset.alphabet),
+                                            EMBDIMS, input_length=None))
     # model.add(k.layers.core.Dropout(0.25))
     
     model.add(k.layers.core.Dense(1128))
