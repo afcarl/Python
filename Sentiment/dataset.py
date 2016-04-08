@@ -21,7 +21,8 @@ class Dataset:
 
     index = 1 # zero used to encode unknown words
     unigram_counts = collections.Counter(unigrams)
-    for unigram, count in unigram_counts.most_common(max_features):
+    self.alphabet['unknown_word'] = 0
+    for unigram, count in unigram_counts.most_common(max_features - 1):
       self.alphabet[unigram] = index
       index = index + 1
 

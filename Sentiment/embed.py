@@ -18,24 +18,19 @@ EPOCHS = 5
 CLASSES = 2
 EMBDIMS = 100
 MAXLEN = 100
-MAXFEATURES = 5000
+MAXFEATURES = 10000
 
 if __name__ == "__main__":
 
   np.random.seed(1337) 
   dataset = dataset.Dataset(MAXFEATURES)
-  print 'vocab size:', len(dataset.alphabet)
   x, y = dataset.load_data()
-
-  pos_labels = [1] * (len(y) / 2)
-  neg_labels = [0] * (len(y) / 2)
-  labels = np.array(pos_labels + neg_labels)
-  labels_one_hot = k.utils.np_utils.to_categorical(labels, CLASSES)  
+  labels_one_hot = k.utils.np_utils.to_categorical(np.array(y), CLASSES)  
 
   x = sequence.pad_sequences(x, maxlen=MAXLEN)
 
   scores = []
-  folds = sk.cross_validation.KFold(len(labels), n_folds=NFOLDS)
+  folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS)
 
   for train_indices, test_indices in folds:
     print 'starting new fold...'
@@ -46,7 +41,7 @@ if __name__ == "__main__":
     
     model = k.models.Sequential()
 
-    model.add(Embedding(MAXFEATURES + 1, EMBDIMS, input_length=MAXLEN))
+    model.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
     model.add(Flatten()) # not sure what this is...
     
     model.add(Dense(128))
