@@ -3,6 +3,7 @@
 import glob, string, collections, operator
 
 PATH = '/Users/Dima/Loyola/Data/RtPolarity/rt-polarity.*'
+FILES2LABELS = {'rt-polarity.neg':0, 'rt-polarity.pos':1}
 
 class Dataset:
   """Interface to RT sentiment data"""
@@ -12,7 +13,7 @@ class Dataset:
 
     self.alphabet = {} # words indexed by frequency
 
-    unigrams = []
+    unigrams = [] # read entire corpus into a list
     for file_name in glob.glob(PATH):
       for line in open(file_name):
         printable = ''.join(c for c in line if c in string.printable)
@@ -37,13 +38,13 @@ class Dataset:
           if unigram in self.alphabet:
             example.append(self.alphabet[unigram])
         examples.append(example)
-        labels.append(file_name.split('.')[1])
+        labels.append(FILES2LABELS[file_name.split('/')[-1]])
 
     return examples, labels
 
 if __name__ == "__main__":
 
-  dataset = Dataset(max_features=5)
+  dataset = Dataset(max_features=10)
   print 'vocabulary size:', len(dataset.alphabet)
   x,y = dataset.load_data()
-  print x[600], y[600]
+  print x[7000], y[7000]
