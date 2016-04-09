@@ -15,13 +15,13 @@ from keras.layers.embeddings import Embedding
 
 NFOLDS = 10
 BATCH = 50
-EPOCHS = 2
+EPOCHS = 5
 CLASSES = 2
 EMBDIMS = 300
 MAXLEN = 55
-MAXFEATURES = 15000
+MAXFEATURES = 18000
 FILTERS = 100
-FILTLEN = 2
+FILTLEN = 3
 
 if __name__ == "__main__":
 
@@ -36,7 +36,8 @@ if __name__ == "__main__":
   scores = []
   folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS)
 
-  for train_indices, test_indices in folds:
+  # todo: look at train_indices and test_indices
+  for fold_num, (train_indices, test_indices) in enumerate(folds):
     train_x = x[train_indices]
     train_y = y[train_indices]
     test_x = x[test_indices]
@@ -54,10 +55,6 @@ if __name__ == "__main__":
                             subsample_length=1))
     model.add(MaxPooling1D(pool_length=2))
     model.add(Flatten())
-    
-    model.add(Dense(128))
-    model.add(Dropout(0.5))
-    model.add(Activation('relu'))
 
     model.add(Dense(CLASSES))
     model.add(Activation('softmax'))
@@ -71,7 +68,7 @@ if __name__ == "__main__":
                            batch_size=BATCH, verbose=0,
                            show_accuracy=True)
 
-    print 'fold accuracy:', score[1]
+    print 'fold %s accuracy:' % (fold_num, score[1])
     scores.append(score[1])
   
   print np.mean(scores)
