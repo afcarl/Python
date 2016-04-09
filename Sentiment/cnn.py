@@ -68,7 +68,7 @@ if __name__ == "__main__":
                            batch_size=BATCH, verbose=0,
                            show_accuracy=True)
 
-    print 'fold %s accuracy:' % (fold_num, score[1])
+    print 'fold %d accuracy: %f' % (fold_num, score[1])
     scores.append(score[1])
   
   print np.mean(scores)
