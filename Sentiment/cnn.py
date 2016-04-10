@@ -14,7 +14,7 @@ from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 
 NFOLDS = 10
-BATCH = 50
+BATCH = 25
 EPOCHS = 5
 CLASSES = 2
 EMBDIMS = 300
@@ -46,7 +46,6 @@ if __name__ == "__main__":
     model = k.models.Sequential()
 
     model.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
-    model.add(Dropout(0.5))
 
     model.add(Convolution1D(nb_filter=FILTERS,
                             filter_length=FILTLEN,
