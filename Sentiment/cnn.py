@@ -21,7 +21,7 @@ EMBDIMS = 300
 MAXLEN = 55
 MAXFEATURES = 18000
 FILTERS = 100
-FILTLEN = 3
+FILTLEN = 4
 
 if __name__ == "__main__":
 
