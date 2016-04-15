@@ -5,7 +5,7 @@ import glob, string, collections, operator
 PATH = '/Users/Dima/Loyola/Data/RtPolarity/rt-polarity.*'
 FILES2LABELS = {'rt-polarity.neg':0, 'rt-polarity.pos':1}
 
-class Dataset:
+class DatasetProvider:
   """Interface to RT sentiment data"""
   
   def __init__(self, max_features=None):
@@ -45,7 +45,7 @@ class Dataset:
 
 if __name__ == "__main__":
 
-  dataset = Dataset(max_features=10)
+  dataset = DatasetProvider(max_features=10)
   print 'vocabulary size:', len(dataset.alphabet)
   x,y = dataset.load_data()
   print x[7000], y[7000]

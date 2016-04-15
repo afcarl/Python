@@ -28,7 +28,7 @@ if __name__ == "__main__":
   # average performance around 0.754360213358
   
   np.random.seed(1337) 
-  dataset = dataset.Dataset(MAXFEATURES)
+  dataset = dataset.DatasetProvider(MAXFEATURES)
   x, y = dataset.load_data()
 
   # turn x and y into numpy array among other things
