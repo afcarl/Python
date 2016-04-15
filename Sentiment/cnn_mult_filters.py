@@ -9,7 +9,7 @@ import dataset
 
 from keras.preprocessing import sequence
 from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten
+from keras.layers.core import Dense, Dropout, Activation, Flatten, Merge
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 
@@ -21,42 +21,49 @@ EMBDIMS = 300
 MAXLEN = 55
 MAXFEATURES = 18000
 FILTERS = 100
-FILTLEN = 4
+# FILTLEN = 4
 
 if __name__ == "__main__":
 
-  # average performance around 0.754360213358
-  
   np.random.seed(1337) 
   dataset = dataset.Dataset(MAXFEATURES)
   x, y = dataset.load_data()
 
-  # turn x and y into numpy array among other things
+  # turn x and y into numpy arrays among other things
   x = sequence.pad_sequences(x, maxlen=MAXLEN)
   y = k.utils.np_utils.to_categorical(np.array(y), CLASSES)  
 
   scores = []
-  folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS, shuffle=True)
+  folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS)
 
-  # todo: look at train_indices and test_indices
   for fold_num, (train_indices, test_indices) in enumerate(folds):
     train_x = x[train_indices]
     train_y = y[train_indices]
     test_x = x[test_indices]
     test_y = y[test_indices]
     
-    model = k.models.Sequential()
+    left = Sequential()
+    left.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
+    left.add(Convolution1D(nb_filter=FILTERS,
+                           filter_length=3,
+                           border_mode='valid',
+                           activation='relu',
+                           subsample_length=1))
+    left.add(MaxPooling1D(pool_length=2))
+    left.add(Flatten())
 
-    model.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
+    right = Sequential()
+    right.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
+    right.add(Convolution1D(nb_filter=FILTERS,
+                           filter_length=4,
+                           border_mode='valid',
+                           activation='relu',
+                           subsample_length=1))
+    right.add(MaxPooling1D(pool_length=2))
+    right.add(Flatten())
 
-    model.add(Convolution1D(nb_filter=FILTERS,
-                            filter_length=FILTLEN,
-                            border_mode='valid',
-                            activation='relu',
-                            subsample_length=1))
-    model.add(MaxPooling1D(pool_length=2))
-    model.add(Flatten())
-
+    model = Sequential()
+    model.add(Merge([left, right], mode='concat'))
     model.add(Dense(CLASSES))
     model.add(Activation('softmax'))
 
