@@ -1,6 +1,10 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
-"""10-fold CV performance is about 0.76"""
+"""
+10-fold CV performance: 0.7610 
+params: 50 batches, filter len 4, 5 epochs
+10-fold cv takes 47 minutes
+"""
 
 import numpy as np
 import sklearn as sk
@@ -16,7 +20,7 @@ from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 
 NFOLDS = 10
-BATCH = 25
+BATCH = 50
 EPOCHS = 5
 CLASSES = 2
 EMBDIMS = 300
