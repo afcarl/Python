@@ -12,6 +12,7 @@ import sklearn.cross_validation
 import keras as k
 import keras.utils.np_utils
 import dataset
+import word2vec_model
 
 from keras.preprocessing import sequence
 from keras.models import Sequential
@@ -33,6 +34,11 @@ if __name__ == "__main__":
 
   np.random.seed(1337) 
   dataset = dataset.DatasetProvider(MAXFEATURES)
+
+  path = '/Users/Dima/Loyola/Data/Word2Vec/Models/GoogleNews-vectors-negative300.txt'
+  word2vec = word2vec_model.Model(path)
+  init_vectors = word2vec.subset_vectors(dataset.alphabet)
+  
   x, y = dataset.load_data()
 
   # turn x and y into numpy array among other things
@@ -51,7 +57,10 @@ if __name__ == "__main__":
     
     model = k.models.Sequential()
 
-    model.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
+    model.add(Embedding(MAXFEATURES,
+                        EMBDIMS,
+                        input_length=MAXLEN,
+                        weights=[init_vectors]))
 
     model.add(Convolution1D(nb_filter=FILTERS,
                             filter_length=FILTLEN,
