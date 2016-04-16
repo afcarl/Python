@@ -1,5 +1,7 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
+"""10-fold CV performance is about 0.76"""
+
 import numpy as np
 import sklearn as sk
 import sklearn.cross_validation
@@ -25,8 +27,6 @@ FILTLEN = 4
 
 if __name__ == "__main__":
 
-  # average performance around 0.754360213358
-  
   np.random.seed(1337) 
   dataset = dataset.DatasetProvider(MAXFEATURES)
   x, y = dataset.load_data()
@@ -61,16 +61,20 @@ if __name__ == "__main__":
     model.add(Activation('softmax'))
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer='rmsprop')
-    model.fit(train_x, train_y,
-              nb_epoch=EPOCHS, batch_size=BATCH, verbose=0,
-              show_accuracy=True, validation_split=0.1)
-    score = model.evaluate(test_x, test_y,
-                           batch_size=BATCH, verbose=0,
-                           show_accuracy=True)
-
-    print 'fold %d accuracy: %f' % (fold_num, score[1])
-    scores.append(score[1])
+                  optimizer='rmsprop',
+                  metrics=['accuracy'])
+    model.fit(train_x,
+              train_y,
+              nb_epoch=EPOCHS,
+              batch_size=BATCH,
+              verbose=0,
+              validation_split=0.1)
+    score, accuracy = model.evaluate(test_x,
+                                     test_y,
+                                     batch_size=BATCH,
+                                     verbose=0)
+    # todo: what is score?
+    print 'fold %d accuracy: %f' % (fold_num, accuracy)
+    scores.append(accuracy)
   
   print np.mean(scores)
-  
