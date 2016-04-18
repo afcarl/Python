@@ -61,7 +61,7 @@ if __name__ == "__main__":
     model.add(Embedding(MAXFEATURES,
                         EMBDIMS,
                         input_length=MAXLEN,
-                        weights=None))#[init_vectors]))
+                        weights=[init_vectors]))
 
     model.add(Convolution1D(nb_filter=FILTERS,
                             filter_length=FILTLEN,
