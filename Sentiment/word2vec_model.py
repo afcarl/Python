@@ -26,13 +26,14 @@ class Model:
   def select_vectors(self, alphabet):
     """Return vectors for items in alphabet"""
 
-    vecs = numpy.random.uniform(low=-1,
-                                high=1.0,
-                                size=(len(alphabet), self.dimensions))
+    average = self.average_words(alphabet.keys())
+    vecs = numpy.zeros((len(alphabet), self.dimensions))
 
     for word, index in alphabet.items():
       if word in self.vectors:
         vecs[index, :] = self.vectors[word]
+      else:
+        vecs[index, :] = average
 
     return vecs
   

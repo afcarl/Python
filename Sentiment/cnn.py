@@ -1,7 +1,7 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
 """
-10-fold CV performance: 0.7610 (0.7621 with google embeddings)
+10-fold CV performance: 0.7610 (0.7623 with google embeddings)
 params: 50 batches, filter len 4, 5 epochs
 10-fold cv takes 47 minutes
 """
@@ -13,6 +13,8 @@ import keras as k
 import keras.utils.np_utils
 import dataset
 import word2vec_model
+
+np.random.seed(1337) # for reproducibility
 
 from keras.preprocessing import sequence
 from keras.models import Sequential
@@ -32,11 +34,8 @@ FILTLEN = 4
 
 if __name__ == "__main__":
 
-  np.random.seed(1337) 
   dataset = dataset.DatasetProvider(MAXFEATURES)
   x, y = dataset.load_data()
-
-  # init_vectors = np.random.uniform(-1, 1, (MAXFEATURES, EMBDIMS))
 
   path = '/Users/Dima/Loyola/Data/Word2Vec/Models/GoogleNews-vectors-negative300.txt'
   word2vec = word2vec_model.Model(path)
@@ -47,7 +46,8 @@ if __name__ == "__main__":
   y = k.utils.np_utils.to_categorical(np.array(y), CLASSES)  
 
   scores = []
-  folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS, shuffle=True)
+  folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS,
+                                    shuffle=True, random_state=1337)
 
   # todo: look at train_indices and test_indices
   for fold_num, (train_indices, test_indices) in enumerate(folds):
