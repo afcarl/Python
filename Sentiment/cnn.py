@@ -1,7 +1,7 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
 """
-10-fold CV performance: 0.7610 (0.7623 with google embeddings)
+10-fold CV performance: 0.7842
 params: 50 batches, filter len 4, 5 epochs
 10-fold cv takes 47 minutes
 """
