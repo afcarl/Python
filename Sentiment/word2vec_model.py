@@ -23,19 +23,19 @@ class Model:
         vector = [float(element) for element in elements[1:self.dimensions+1]]
         self.vectors[word] = numpy.array(vector)
 
-  def subset_vectors(self, alphabet):
+  def select_vectors(self, alphabet):
     """Return vectors for items in alphabet"""
 
-    vecs = numpy.zeros((len(alphabet), 300))
+    vecs = numpy.random.uniform(low=-1,
+                                high=1.0,
+                                size=(len(alphabet), self.dimensions))
 
     for word, index in alphabet.items():
       if word in self.vectors:
         vecs[index, :] = self.vectors[word]
-      else:
-        vecs[index, :] = numpy.random.uniform(low=0.0, high=1.0, size=300)
 
     return vecs
-
+  
   def average_words(self, words):
     """Compute average vector for a list of words"""
 

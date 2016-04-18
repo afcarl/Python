@@ -1,7 +1,7 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
 """
-10-fold CV performance: 0.7610 
+10-fold CV performance: 0.7610 (0.7621 with google embeddings)
 params: 50 batches, filter len 4, 5 epochs
 10-fold cv takes 47 minutes
 """
@@ -34,12 +34,13 @@ if __name__ == "__main__":
 
   np.random.seed(1337) 
   dataset = dataset.DatasetProvider(MAXFEATURES)
+  x, y = dataset.load_data()
+
+  # init_vectors = np.random.uniform(-1, 1, (MAXFEATURES, EMBDIMS))
 
   path = '/Users/Dima/Loyola/Data/Word2Vec/Models/GoogleNews-vectors-negative300.txt'
   word2vec = word2vec_model.Model(path)
-  init_vectors = word2vec.subset_vectors(dataset.alphabet)
-  
-  x, y = dataset.load_data()
+  init_vectors = word2vec.select_vectors(dataset.alphabet)
 
   # turn x and y into numpy array among other things
   x = sequence.pad_sequences(x, maxlen=MAXLEN)
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     model.add(Embedding(MAXFEATURES,
                         EMBDIMS,
                         input_length=MAXLEN,
-                        weights=[init_vectors]))
+                        weights=None))#[init_vectors]))
 
     model.add(Convolution1D(nb_filter=FILTERS,
                             filter_length=FILTLEN,
