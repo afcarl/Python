@@ -1,21 +1,32 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
 """
-10-fold CV performance: 0.7842
+10-fold CV performance: 0.7847
 params: 50 batches, filter len 4, 5 epochs
 10-fold cv takes 47 minutes
+
+fold 0 accuracy: 0.763824
+fold 1 accuracy: 0.790066
+fold 2 accuracy: 0.791745
+fold 3 accuracy: 0.802064
+fold 4 accuracy: 0.753283
+fold 5 accuracy: 0.771107
+fold 6 accuracy: 0.781426
+fold 7 accuracy: 0.769231
+fold 8 accuracy: 0.784240
+fold 9 accuracy: 0.795497
+0.780248224908
 """
 
 import numpy as np
+np.random.seed(1337) # for reproducibility
+
 import sklearn as sk
 import sklearn.cross_validation
 import keras as k
 import keras.utils.np_utils
 import dataset
 import word2vec_model
-
-np.random.seed(1337) # for reproducibility
-
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
@@ -46,8 +57,9 @@ if __name__ == "__main__":
   y = k.utils.np_utils.to_categorical(np.array(y), CLASSES)  
 
   scores = []
-  folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS,
-                                    shuffle=True, random_state=1337)
+  folds = sk.cross_validation.KFold(len(y),
+                                    n_folds=NFOLDS,
+                                    shuffle=True)
 
   # todo: look at train_indices and test_indices
   for fold_num, (train_indices, test_indices) in enumerate(folds):
