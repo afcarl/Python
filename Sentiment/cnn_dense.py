@@ -1,5 +1,13 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
+"""
+This CNN takes as input google news embeddings but does not
+update them during training. The accuracy I am seeing is 0.7776
+which is better than with embeddings trained from scratch on 
+sentiment data (about 0.7610) but worse than when google embeddings
+are updated during training (about 0.7802).
+"""
+
 import numpy as np
 np.random.seed(1337)
 
@@ -32,32 +40,28 @@ if __name__ == "__main__":
 
   path = '/Users/Dima/Loyola/Data/Word2Vec/Models/GoogleNews-vectors-negative300.txt'
   word2vec = word2vec_model.Model(path)
-  init_vectors = word2vec.select_vectors(dataset.alphabet)
+  embedding_lookup = word2vec.select_vectors(dataset.alphabet)
 
   # turn x and y into numpy arrays among other things
-  
   x = sequence.pad_sequences(x, maxlen=MAXLEN)
   y = k.utils.np_utils.to_categorical(np.array(y), CLASSES)
 
-  print x[0]
-  print x[1]
-
-  X = np.zeros((10662, 55, 300))
+  x3d = np.zeros((10662, 55, 300))
   for row in range(10662):
     for col in range(55):
-      # X[row, col, :] = np.random.uniform(-1, 1, 300)
-      word = x[row][col]
-      X[row, col, :] = init_vectors[word]
+      word = x[row, col]
+      x3d[row, col, :] = embedding_lookup[word]
   
   scores = []
-  folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS,
-                                    shuffle=True, random_state=1337)
+  folds = sk.cross_validation.KFold(len(y),
+                                    n_folds=NFOLDS,
+                                    shuffle=True)
 
   # todo: look at train_indices and test_indices
   for fold_num, (train_indices, test_indices) in enumerate(folds):
-    train_x = X[train_indices]
+    train_x = x3d[train_indices]
     train_y = y[train_indices]
-    test_x = X[test_indices]
+    test_x = x3d[test_indices]
     test_y = y[test_indices]
 
     model = k.models.Sequential()
