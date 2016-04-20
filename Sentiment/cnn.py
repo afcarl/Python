@@ -48,6 +48,7 @@ if __name__ == "__main__":
   dataset = dataset.DatasetProvider(MAXFEATURES)
   x, y = dataset.load_data()
 
+  # TODO: what what are we doing for index 0 (oov words)?
   path = '/Users/Dima/Loyola/Data/Word2Vec/Models/GoogleNews-vectors-negative300.txt'
   word2vec = word2vec_model.Model(path)
   init_vectors = word2vec.select_vectors(dataset.alphabet)
