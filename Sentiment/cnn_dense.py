@@ -5,7 +5,7 @@ This CNN takes as input google news embeddings but does not
 update them during training. The accuracy I am seeing is 0.7776
 which is better than with embeddings trained from scratch on 
 sentiment data (about 0.7610) but worse than when google embeddings
-are updated during training (about 0.7802).
+are updated during training (about 0.78-0.79).
 """
 
 import numpy as np
