@@ -1,5 +1,11 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
+"""
+CNN with one-hot word vectors. Takes forever to run. 
+After 4 hours, finished two folds:
+fold 0 accuracy: 0.704780
+fold 1 accuracy: 0.750703
+"""
 import numpy as np
 np.random.seed(1337)
 
@@ -25,11 +31,6 @@ MAXFEATURES = 18000
 FILTERS = 100
 FILTLEN = 4
 
-def create_generator():
-  """Generate us some power"""
-
-  pass
- 
 if __name__ == "__main__":
 
   dataset = dataset.DatasetProvider(MAXFEATURES)
@@ -47,7 +48,7 @@ if __name__ == "__main__":
       word = x[row, col]
       hot[word] = 1
       x3d[row, col, :] = hot
-  print 'generated one-hot tensor'
+  print x3d
       
   scores = []
   folds = sk.cross_validation.KFold(len(y),
