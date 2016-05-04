@@ -47,7 +47,7 @@ class DatasetProvider:
       else:
         data.append(average)
 
-    return numpy.array(data)
+    return numpy.array(data), numpy.array(self.labels)
 
 if __name__ == "__main__":
 

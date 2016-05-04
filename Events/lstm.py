@@ -17,18 +17,14 @@ NFOLDS = 10
 BATCH = 50
 EPOCHS = 5
 EMBDIMS = 300
-MAXLEN = 55
-MAXFEATURES = 18000
 
 if __name__ == "__main__":
 
-  np.random.seed(1337) 
-  dataset = dataset.DatasetProvider(MAXFEATURES)
-  x, y = dataset.load_data()
-
-  x = sequence.pad_sequences(x, maxlen=MAXLEN)
-  y = np.array(y)
-
+  dataset = dataset.DatasetProvider()
+  x, y = dataset.load()
+  print 'x shape:', x.shape
+  print 'y shape:', y.shape
+  
   scores = []
   folds = sk.cross_validation.KFold(len(y), n_folds=NFOLDS, shuffle=True)
 
@@ -39,8 +35,8 @@ if __name__ == "__main__":
     test_y = y[test_indices]
     
     model = k.models.Sequential()
-    model.add(Embedding(MAXFEATURES, EMBDIMS, input_length=MAXLEN))
-    model.add(LSTM(128)) 
+    model.add(LSTM(128, input_length=205845, input_dim=300))
+    # model.add(Dense(128, input_shape=(EMBDIMS,)))
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
 
