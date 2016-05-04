@@ -1,20 +1,29 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
-import collections
+"""
+Some statistics:
 
-PATH = '/Users/Dima/Loyola/Data/Thyme/events.txt'
-EMBPATH = ''
+tokens in data: 7463
+embeddings: 131045
+have embeddings for: 6237
+"""
+
+import numpy
+import word2vec_model
+
+GOLDPATH = '/Users/Dima/Loyola/Data/Thyme/events.txt'
+EMBPATH = '/Users/Dima/Loyola/Data/Word2Vec/Models/mimic.txt'
 
 class DatasetProvider:
   """Provide data"""
 
-  def __init__(self, path=PATH):
-    """Load data. Events are marked as [event_text]"""
+  def __init__(self, path=GOLDPATH):
+    """Each token is a sample. Events are marked as [event]"""
 
     self.data = []
     self.labels = []
     
-    for line in open(PATH):
+    for line in open(GOLDPATH):
       for token in line.split():
         if token.startswith('[') and token.endswith(']'):
           self.labels.append(1)   # this is an event
@@ -24,15 +33,24 @@ class DatasetProvider:
           self.data.append(token)
 
 
-  def map_to_vectors(self, path=EMBPATH):
-    """Map words to vectors"""
+  def load(self, path=EMBPATH):
+    """Each token is a sample"""
 
+    word2vec = word2vec_model.Model(path)
+    uniq_words_in_data = set(self.data)
+    average = word2vec.average_words(uniq_words_in_data)
     
+    data = [] # list of numpy arrays
+    for token in self.data:
+      if token in word2vec.vectors:
+        data.append(word2vec.vectors[token])
+      else:
+        data.append(average)
+
+    return numpy.array(data)
 
 if __name__ == "__main__":
 
   dataset = DatasetProvider()
-  print len(dataset.data)
-  print len(dataset.labels)
-  print collections.Counter(dataset.labels)
+  dataset.load()
   
