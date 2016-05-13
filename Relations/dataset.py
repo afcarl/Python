@@ -48,7 +48,7 @@ class DatasetProvider:
         if unigram in self.alphabet:
           example.append(self.alphabet[unigram])
       examples.append(example)
-      labels.append(label)
+      labels.append(label2int[label])
 
     return examples, labels
 
@@ -58,3 +58,4 @@ if __name__ == "__main__":
   print 'alphabet size:', len(dataset.alphabet)
   x,y = dataset.load_data()
   print 'max seq len:', max([len(s) for s in x])
+  print y
