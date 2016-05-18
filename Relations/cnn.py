@@ -18,31 +18,26 @@ from keras.layers.embeddings import Embedding
 
 nfolds = 10
 batch = 50
-epochs = 5
-classes = 10
+epochs = 1
 embdims = 300
-maxlen = 59
-maxfeatures = 4299
 filters = 100
-filtlen = 3
+filtlen = 2
+
+emb_path = '/Users/Dima/Loyola/Data/Word2Vec/Models/mimic.txt'
 
 if __name__ == "__main__":
 
   dataset = dataset.DatasetProvider()
   x, y = dataset.load_data()
 
-  path = '/Users/Dima/Loyola/Data/Word2Vec/Models/mimic.txt'
-  word2vec = word2vec_model.Model(path)
-  init_vectors = word2vec.select_vectors(dataset.alphabet)
-
   # turn x and y into numpy array among other things
+  maxlen = max([len(seq) for seq in x])
+  classes = len(set(y))
   x = sequence.pad_sequences(x, maxlen=maxlen)
   y = k.utils.np_utils.to_categorical(np.array(y), classes)  
 
   scores = []
-  folds = sk.cross_validation.KFold(len(y),
-                                    n_folds=nfolds,
-                                    shuffle=True)
+  folds = sk.cross_validation.KFold(len(y), n_folds=nfolds, shuffle=True)
 
   for fold_num, (train_indices, test_indices) in enumerate(folds):
     train_x = x[train_indices]
@@ -51,11 +46,10 @@ if __name__ == "__main__":
     test_y = y[test_indices]
     
     model = k.models.Sequential()
-
-    model.add(Embedding(maxfeatures,
+    
+    model.add(Embedding(len(dataset.alphabet),
                         embdims,
-                        input_length=maxlen,
-                        weights=[init_vectors]))
+                        input_length=maxlen))
 
     model.add(Convolution1D(nb_filter=filters,
                             filter_length=filtlen,
@@ -77,18 +71,20 @@ if __name__ == "__main__":
               batch_size=batch,
               verbose=0,
               validation_split=0.1)
-    # score, accuracy = model.evaluate(test_x,
-    #                                  test_y,
-    #                                  batch_size=batch,
-    #                                  verbose=0)
 
-    predictions = model.predict(test_x, batch_size=batch)
-    print predictions
-    print
-    print f1_score(test_y, predictions, average=None)
+    # distribution over classes
+    distribution = model.predict(test_x, batch_size=batch)
+    # class predictions
+    predictions = np.argmax(distribution, axis=1)
+    # gold labels
+    gold = np.argmax(test_y, axis=1)
+    # f1 for each class
+    f1 = f1_score(gold, predictions, average=None)
+    # f1 for contains
+    f1_contains = f1[1]
 
-    # todo: what is score?
-    print 'fold %d accuracy: %f' % (fold_num, accuracy)
-    scores.append(accuracy)
+    print 'f1 for all classes:', f1
+    print 'fold %d f1 for contains: %f' % (fold_num, f1_contains)
+    scores.append(f1_contains)
   
   print np.mean(scores)
