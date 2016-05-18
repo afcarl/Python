@@ -2,7 +2,6 @@
 
 import glob, string, collections, operator
 
-data_path = '/Users/Dima/Loyola/Data/Thyme/event-event-rel.txt'
 label2int = {
   'none':0,
   'contains':1,
@@ -19,13 +18,14 @@ label2int = {
 class DatasetProvider:
   """THYME relation data"""
   
-  def __init__(self):
+  def __init__(self, path):
     """Index words by overall frequency in the dataset"""
 
+    self.path = path
     self.alphabet = {} # words indexed by frequency
 
     unigrams = [] # read entire corpus into a list
-    for line in open(data_path):
+    for line in open(self.path):
       _, text = line.strip().split('|')
       unigrams.extend(text.split())
 
@@ -41,7 +41,7 @@ class DatasetProvider:
 
     examples = []
     labels = []
-    for line in open(data_path):
+    for line in open(self.path):
       label, text = line.strip().split('|')
       example = []
       for unigram in text.split():
@@ -53,7 +53,7 @@ class DatasetProvider:
 
 if __name__ == "__main__":
 
-  dataset = DatasetProvider()
+  dataset = DatasetProvider('/Users/Dima/Loyola/Data/Thyme/Deep/Rel/train.txt')
   print 'alphabet size:', len(dataset.alphabet)
   x,y = dataset.load_data()
   print 'max seq len:', max([len(s) for s in x])
