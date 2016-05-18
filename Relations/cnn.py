@@ -17,8 +17,8 @@ from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 
 nfolds = 10
-batch = 50
-epochs = 1
+batch = 25
+epochs = 5
 embdims = 300
 filters = 100
 filtlen = 2
@@ -83,7 +83,6 @@ if __name__ == "__main__":
     # f1 for contains
     f1_contains = f1[1]
 
-    print 'f1 for all classes:', f1
     print 'fold %d f1 for contains: %f' % (fold_num, f1_contains)
     scores.append(f1_contains)
   

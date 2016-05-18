@@ -1,0 +1,20 @@
+fold 0 f1 for contains: 0.551724
+fold 1 f1 for contains: 0.472103
+fold 2 f1 for contains: 0.552000
+fold 3 f1 for contains: 0.561538
+fold 4 f1 for contains: 0.495413
+fold 5 f1 for contains: 0.542986
+fold 6 f1 for contains: 0.542857
+fold 7 f1 for contains: 0.486486
+fold 8 f1 for contains: 0.618868
+fold 9 f1 for contains: 0.549618
+0.537359474762
+
+# To Do
+
+* Convert numeric tokens into numeric_token
+
+* Neural network that accepts two arg headwords (vectors) and classifies the relation between them. Learn/update embeddings. Concatenate vs. average the embeddingss.
+
+* Make above part of a larger network that classifies context + head words
+
