@@ -2,12 +2,12 @@
 
 import glob, string, collections, operator
 
-data_path = '/Users/Dima/Temp/out.txt'
+data_path = '/Users/Dima/Loyola/Data/Thyme/event-event-rel.txt'
 label2int = {
   'none':0,
-  'before':1,
-  'begins-on':2,
-  'contains':3,
+  'contains':1,
+  'before':2,
+  'begins-on':3,
   'continues':4,
   'ends-on':5,
   'initiates':6,
@@ -17,7 +17,7 @@ label2int = {
   }
 
 class DatasetProvider:
-  """Interface to RT sentiment data"""
+  """THYME relation data"""
   
   def __init__(self):
     """Index words by overall frequency in the dataset"""
@@ -45,8 +45,7 @@ class DatasetProvider:
       label, text = line.strip().split('|')
       example = []
       for unigram in text.split():
-        if unigram in self.alphabet:
-          example.append(self.alphabet[unigram])
+        example.append(self.alphabet[unigram])
       examples.append(example)
       labels.append(label2int[label])
 
@@ -59,4 +58,5 @@ if __name__ == "__main__":
   x,y = dataset.load_data()
   print 'max seq len:', max([len(s) for s in x])
   print 'number of examples:', len(x)
-  print collections.Counter(y)
+  print 'number of labels:', len(set(y))
+  print 'label counts:', collections.Counter(y)
