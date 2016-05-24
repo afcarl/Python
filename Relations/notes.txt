@@ -1,16 +1,82 @@
-fold 0 f1 for contains: 0.551724
-fold 1 f1 for contains: 0.472103
-fold 2 f1 for contains: 0.552000
-fold 3 f1 for contains: 0.561538
-fold 4 f1 for contains: 0.495413
-fold 5 f1 for contains: 0.542986
-fold 6 f1 for contains: 0.542857
-fold 7 f1 for contains: 0.486486
-fold 8 f1 for contains: 0.618868
-fold 9 f1 for contains: 0.549618
-0.537359474762
+# Examples
+
+contains|echocardiogram noted
+contains|echocardiogram noted severe bi-atrial enlargement
+contains|echocardiogram noted severe bi-atrial enlargement and aortic valve stenosis
+none|noted severe bi-atrial enlargement
+none|noted severe bi-atrial enlargement and aortic valve stenosis
+none|enlargement and aortic valve stenosis
+
+continues|continued to experience
+continues|continued to experience respiratory distress
+none|continued to experience respiratory distress and eventually was intubated
+contains|experience respiratory distress
+before|experience respiratory distress and eventually was intubated
+before|distress and eventually was intubated
+contains|scan of the chest noted
+contains|scan of the chest noted a tiny indeterminate pulmonary nodule
+contains|scan of the chest noted a tiny indeterminate pulmonary nodule of the right base
+adjacent to the diaphragm and mildly prominent subcarinal and right hilar lymph nodes
+none|noted a tiny indeterminate pulmonary nodule
+none|noted a tiny indeterminate pulmonary nodule of the right base adjacent to the
+diaphragm and mildly prominent subcarinal and right hilar lymph nodes
+none|nodule of the right base adjacent to the diaphragm and mildly prominent subcarinal
+and right hilar lymph nodes
+
+# Layers
+
+* Embedding layer
+* Convolution1D layer
+* MaxPoolilng1D layer
+* Dense layer (10 units)
+* Softmax
+
+# Training parameters
+
+batch = 25
+epochs = 5
+embdims = 300
+filters = 200
+filtlen = 2
+
+train_size = 78452 
+
+# Dataset
+
+THYME train + dev combined in one file:
+
+alphabet size: 12352
+max seq len: 139
+number of examples: 122,624
+number of labels: 10
+label counts: Counter({0: 110778, 1: 6579, 7: 2759, 2: 1414, 3: 307, 4: 229, 6: 207, 5: 149, 9: 133, 8: 69})
+
+# Results
+
+[ 0.94121891  0.46448894  0.15781487  0.20183486  0.62569832  0.  0.42592593  0.11684518  0.          0.        ]
+
+f1 for contains: 0.464488935722
+
+label2int = {
+  'none':0,
+  'contains':1,
+  'before':2,
+  'begins-on':3,
+  'continues':4,
+  'ends-on':5,
+  'initiates':6,
+  'overlap':7,
+  'reinitiates':8,
+  'terminates':9
+  }
 
 # To Do
+
+* Initialize with MIMIC III embeddings
+
+* Dropout
+
+* Convert ':' characters to separate tokens
 
 * Convert numeric tokens into numeric_token
 
@@ -18,3 +84,4 @@ fold 9 f1 for contains: 0.549618
 
 * Make above part of a larger network that classifies context + head words
 
+* Insert separator tokens between arguments and context

@@ -53,7 +53,7 @@ class DatasetProvider:
 
 if __name__ == "__main__":
 
-  dataset = DatasetProvider('/Users/Dima/Loyola/Data/Thyme/Deep/Rel/train.txt')
+  dataset = DatasetProvider('/Users/Dima/Loyola/Data/Thyme/Deep/Rel/both.txt')
   print 'alphabet size:', len(dataset.alphabet)
   x,y = dataset.load_data()
   print 'max seq len:', max([len(s) for s in x])

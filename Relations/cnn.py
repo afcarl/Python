@@ -1,25 +1,26 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
 import numpy as np
-np.random.seed(1337) # for reproducibility
-
+np.random.seed(1337)
 import sklearn as sk
-import sklearn.cross_validation
 from sklearn.metrics import f1_score
 import keras as k
 import keras.utils.np_utils
 import dataset
-import word2vec_model
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 
+import sys
+sys.path.append('../Lib/')
+import word2vec_model
+  
 batch = 25
 epochs = 5
 embdims = 300
-filters = 100
+filters = 200
 filtlen = 2
 
 emb_path = '/Users/Dima/Loyola/Data/Word2Vec/Models/mimic.txt'
@@ -30,6 +31,10 @@ if __name__ == "__main__":
 
   dataset = dataset.DatasetProvider(data_path)
   x, y = dataset.load_data()
+
+  # what happens with OOV words / index 0?
+  word2vec = word2vec_model.Model(emb_path)
+  init_vectors = word2vec.select_vectors(dataset.alphabet)
 
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in x])
@@ -54,7 +59,8 @@ if __name__ == "__main__":
     
   model.add(Embedding(len(dataset.alphabet),
                       embdims,
-                      input_length=maxlen))
+                      input_length=maxlen,
+                      weights=[init_vectors]))
 
   model.add(Convolution1D(nb_filter=filters,
                           filter_length=filtlen,
@@ -87,3 +93,4 @@ if __name__ == "__main__":
   f1 = f1_score(gold, predictions, average=None)
 
   print 'f1 for contains:', f1[1]
+  print 'all scores:', f1
