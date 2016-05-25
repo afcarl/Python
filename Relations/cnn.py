@@ -1,4 +1,4 @@
-#! /usr/bin/env python -B
+#!/usr/bin/env python
 
 import numpy as np
 np.random.seed(1337)
@@ -6,14 +6,13 @@ import sklearn as sk
 from sklearn.metrics import f1_score
 import keras as k
 import keras.utils.np_utils
-import dataset
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
-import sys
-sys.path.append('../Lib/')
+import sys; sys.path.append('../Lib/'); sys.dont_write_bytecode = True
+import dataset
 import word2vec_model
 import properties
   
@@ -76,7 +75,7 @@ if __name__ == "__main__":
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_x, batch_size=batch)
+  distribution = model.predict(test_x, batch_size=properties.batch)
   # class predictions
   predictions = np.argmax(distribution, axis=1)
   # gold labels
