@@ -1,4 +1,4 @@
-#!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
+#!/usr/bin/env python
 
 import glob, string, collections, operator
 
