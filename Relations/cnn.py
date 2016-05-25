@@ -24,8 +24,8 @@ if __name__ == "__main__":
   x, y = dataset.load_data()
 
   # what happens with OOV words / index 0?
-  word2vec = word2vec_model.Model(properties.emb_path)
-  init_vectors = word2vec.select_vectors(dataset.alphabet)
+  # word2vec = word2vec_model.Model(properties.emb_path)
+  # init_vectors = word2vec.select_vectors(dataset.alphabet)
 
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in x])
