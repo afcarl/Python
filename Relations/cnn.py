@@ -51,7 +51,7 @@ if __name__ == "__main__":
   model.add(Embedding(len(dataset.alphabet),
                       properties.embdims,
                       input_length=maxlen,
-                      weights=[init_vectors]))
+                      weights=None)) # instead of [init_vectors]))
 
   model.add(Convolution1D(nb_filter=properties.filters,
                           filter_length=properties.filtlen,
