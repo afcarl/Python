@@ -65,6 +65,7 @@ if __name__ == "__main__":
   model.add(MaxPooling1D(pool_length=2))
   model.add(Flatten())
 
+  model.add(Dropout(0.2))
   model.add(Dense(classes))
   model.add(Activation('softmax'))
   
