@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.append('../Lib/')
+sys.dont_write_bytecode = True
+
 import numpy as np
 np.random.seed(1337)
+
 import sklearn as sk
 from sklearn.metrics import f1_score
 import keras as k
@@ -11,11 +16,10 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
-import sys; sys.path.append('../Lib/'); sys.dont_write_bytecode = True
 import dataset
 import word2vec_model
 import properties
-  
+
 train_size = 78452 # first 78452 indices
 
 if __name__ == "__main__":
@@ -53,7 +57,7 @@ if __name__ == "__main__":
                       input_length=maxlen,
                       weights=None)) # instead of [init_vectors]))
 
-  model.add(Convolution1D(nb_filter=properties.filters,
+  model.add(Convolution1D(nb_filter=properties.filters, # output dim
                           filter_length=properties.filtlen,
                           border_mode='valid',
                           activation='relu',
@@ -65,7 +69,7 @@ if __name__ == "__main__":
   model.add(Activation('softmax'))
   
   model.compile(loss='categorical_crossentropy',
-                optimizer='rmsprop',
+                optimizer='adam', # optimizer='rmsprop',
                 metrics=['accuracy'])
   model.fit(train_x,
             train_y,
