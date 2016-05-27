@@ -21,7 +21,6 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 import dataset
-import word2vec_model
 import properties
 
 train_size = 78452 # first 78452 indices
@@ -30,10 +29,6 @@ if __name__ == "__main__":
 
   dataset = dataset.DatasetProvider(properties.data)
   x, y = dataset.load_data()
-
-  # what happens with OOV words / index 0?
-  # word2vec = word2vec_model.Model(properties.emb)
-  # init_vectors = word2vec.select_vectors(dataset.alphabet)
 
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in x])
@@ -59,7 +54,7 @@ if __name__ == "__main__":
   model.add(Embedding(len(dataset.alphabet),
                       properties.embdims,
                       input_length=maxlen,
-                      weights=None)) # instead of [init_vectors]))
+                      weights=None)) 
 
   model.add(Convolution1D(nb_filter=properties.filters, # output dim
                           filter_length=properties.filtlen,
