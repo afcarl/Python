@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
+import sys
+sys.dont_write_bytecode = True
+
 import glob, string, collections, operator
+import properties
 
 label2int = {
   'none':0,
@@ -53,7 +57,7 @@ class DatasetProvider:
 
 if __name__ == "__main__":
 
-  dataset = DatasetProvider('/Users/Dima/Loyola/Data/Thyme/Deep/Rel/both.txt')
+  dataset = DatasetProvider(properties.data_path)
   print 'alphabet size:', len(dataset.alphabet)
   x,y = dataset.load_data()
   print 'max seq len:', max([len(s) for s in x])
