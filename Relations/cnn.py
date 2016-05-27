@@ -28,11 +28,11 @@ train_size = 78452 # first 78452 indices
 
 if __name__ == "__main__":
 
-  dataset = dataset.DatasetProvider(properties.data_path)
+  dataset = dataset.DatasetProvider(properties.data)
   x, y = dataset.load_data()
 
   # what happens with OOV words / index 0?
-  # word2vec = word2vec_model.Model(properties.emb_path)
+  # word2vec = word2vec_model.Model(properties.emb)
   # init_vectors = word2vec.select_vectors(dataset.alphabet)
 
   # turn x and y into numpy array among other things
@@ -69,7 +69,7 @@ if __name__ == "__main__":
   model.add(MaxPooling1D(pool_length=2))
   model.add(Flatten())
 
-  model.add(Dropout(0.25))
+  model.add(Dropout(properties.dropout))
   model.add(Dense(classes))
   model.add(Activation('softmax'))
   
