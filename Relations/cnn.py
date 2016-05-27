@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+f1 for contains: 0.524300441826
+"""
+
 import sys
 sys.path.append('../Lib/')
 sys.dont_write_bytecode = True
@@ -65,12 +69,12 @@ if __name__ == "__main__":
   model.add(MaxPooling1D(pool_length=2))
   model.add(Flatten())
 
-  model.add(Dropout(0.2))
+  model.add(Dropout(0.25))
   model.add(Dense(classes))
   model.add(Activation('softmax'))
   
   model.compile(loss='categorical_crossentropy',
-                optimizer='adam', # optimizer='rmsprop',
+                optimizer='rmsprop',
                 metrics=['accuracy'])
   model.fit(train_x,
             train_y,
