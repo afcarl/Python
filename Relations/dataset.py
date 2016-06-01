@@ -22,34 +22,37 @@ label2int = {
 class DatasetProvider:
   """THYME relation data"""
   
-  def __init__(self, path):
-    """Index words by overall frequency in the dataset"""
+  def __init__(self, train):
+    """Index words by frequency in training data"""
 
-    self.path = path
+    self.train = train
     self.alphabet = {} # words indexed by frequency
 
     unigrams = [] # read entire corpus into a list
-    for line in open(self.path):
-      _, text = line.strip().split('|')
+    for line in open(self.train):
+      label, text = line.strip().split('|')
       unigrams.extend(text.split())
 
     index = 1 # zero used to encode unknown words
     unigram_counts = collections.Counter(unigrams)
-    self.alphabet['unknown_word'] = 0
+    self.alphabet['oov_word'] = 0
     for unigram, count in unigram_counts.most_common():
       self.alphabet[unigram] = index
       index = index + 1
 
-  def load_data(self):
+  def load(self, path):
     """Convert sentences (examples) into lists of indices"""
 
     examples = []
     labels = []
-    for line in open(self.path):
+    for line in open(path):
       label, text = line.strip().split('|')
       example = []
       for unigram in text.split():
-        example.append(self.alphabet[unigram])
+        if unigram in self.alphabet:
+          example.append(self.alphabet[unigram])
+        else:
+          example.append(self.alphabet['oov_word'])
       examples.append(example)
       labels.append(label2int[label])
 
@@ -57,10 +60,11 @@ class DatasetProvider:
 
 if __name__ == "__main__":
 
-  dataset = DatasetProvider(properties.data_path)
+  dataset = DatasetProvider(properties.train)
   print 'alphabet size:', len(dataset.alphabet)
-  x,y = dataset.load_data()
+  x,y = dataset.load(properties.test)
   print 'max seq len:', max([len(s) for s in x])
   print 'number of examples:', len(x)
   print 'number of labels:', len(set(y))
   print 'label counts:', collections.Counter(y)
+  print 'first 10 examples:', x[:10]
