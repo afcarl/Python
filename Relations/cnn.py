@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-"""
-f1 for contains: 0.524300441826
-"""
-
 import sys
 sys.path.append('../Lib/')
 sys.dont_write_bytecode = True
@@ -23,26 +19,22 @@ from keras.layers.embeddings import Embedding
 import dataset
 import properties
 
-train_size = 78452 # first 78452 indices
-
 if __name__ == "__main__":
 
-  dataset = dataset.DatasetProvider(properties.data)
-  x, y = dataset.load_data()
+  # learn alphabet from training data
+  dataset = dataset.DatasetProvider(properties.train)
+  # now load training examples and labels
+  train_x, train_y = dataset.load(properties.train)
+  # now load test examples and labels
+  test_x, test_y = dataset.load(properties.test)
 
   # turn x and y into numpy array among other things
-  maxlen = max([len(seq) for seq in x])
-  classes = len(set(y))
-  x = sequence.pad_sequences(x, maxlen=maxlen)
-  y = k.utils.np_utils.to_categorical(np.array(y), classes)  
-
-  print 'x shape:', x.shape
-  print 'y shape:', y.shape
-  
-  train_x = x[:train_size, :]
-  train_y = y[:train_size, :]
-  test_x = x[train_size:, :]
-  test_y = y[train_size:, :]
+  maxlen = max([len(seq) for seq in train_x + test_x])
+  classes = len(set(train_y))
+  train_x = sequence.pad_sequences(train_x, maxlen=maxlen)
+  train_y = k.utils.np_utils.to_categorical(np.array(train_y), classes)  
+  test_x = sequence.pad_sequences(test_x, maxlen=maxlen)
+  test_y = k.utils.np_utils.to_categorical(np.array(test_y), classes)  
 
   print 'train_x shape:', train_x.shape
   print 'train_y shape:', train_y.shape
@@ -56,7 +48,7 @@ if __name__ == "__main__":
                       input_length=maxlen,
                       weights=None)) 
 
-  model.add(Convolution1D(nb_filter=properties.filters, # output dim
+  model.add(Convolution1D(nb_filter=properties.filters,
                           filter_length=properties.filtlen,
                           border_mode='valid',
                           activation='relu',
