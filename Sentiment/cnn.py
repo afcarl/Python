@@ -1,22 +1,25 @@
-#!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
+#!/usr/bin/env python
 
 """
-10-fold CV performance: 0.7847
 params: 50 batches, filter len 4, 5 epochs
-10-fold cv takes 47 minutes
-
-fold 0 accuracy: 0.763824
-fold 1 accuracy: 0.790066
-fold 2 accuracy: 0.791745
-fold 3 accuracy: 0.802064
-fold 4 accuracy: 0.753283
-fold 5 accuracy: 0.771107
+output:
+Using Theano backend.
+fold 0 accuracy: 0.761012
+fold 1 accuracy: 0.798500
+fold 2 accuracy: 0.787992
+fold 3 accuracy: 0.809568
+fold 4 accuracy: 0.757974
+fold 5 accuracy: 0.768293
 fold 6 accuracy: 0.781426
-fold 7 accuracy: 0.769231
-fold 8 accuracy: 0.784240
-fold 9 accuracy: 0.795497
-0.780248224908
+fold 7 accuracy: 0.772983
+fold 8 accuracy: 0.783302
+fold 9 accuracy: 0.798311
+0.781936252272
 """
+
+import sys
+sys.path.append('../Lib/')
+sys.dont_write_bytecode = True
 
 import numpy as np
 np.random.seed(1337) # for reproducibility
