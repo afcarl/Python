@@ -52,6 +52,7 @@ class DatasetProvider:
         if unigram in self.alphabet:
           example.append(self.alphabet[unigram])
         else:
+          # now padding same as oov; is this good?
           example.append(self.alphabet['oov_word'])
       examples.append(example)
       labels.append(label2int[label])
