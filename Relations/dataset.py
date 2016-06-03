@@ -22,16 +22,16 @@ label2int = {
 class DatasetProvider:
   """THYME relation data"""
   
-  def __init__(self, train):
-    """Index words by frequency in training data"""
+  def __init__(self, file_names):
+    """Index words by frequency in a list of files"""
 
-    self.train = train
     self.alphabet = {} # words indexed by frequency
 
     unigrams = [] # read entire corpus into a list
-    for line in open(self.train):
-      label, text = line.strip().split('|')
-      unigrams.extend(text.split())
+    for file_name in file_names:
+      for line in open(file_name):
+        label, text = line.strip().split('|')
+        unigrams.extend(text.split())
 
     index = 1 # zero used to encode unknown words
     unigram_counts = collections.Counter(unigrams)
@@ -49,11 +49,7 @@ class DatasetProvider:
       label, text = line.strip().split('|')
       example = []
       for unigram in text.split():
-        if unigram in self.alphabet:
-          example.append(self.alphabet[unigram])
-        else:
-          # now padding same as oov; is this good?
-          example.append(self.alphabet['oov_word'])
+        example.append(self.alphabet[unigram])
       examples.append(example)
       labels.append(label2int[label])
 
@@ -61,7 +57,7 @@ class DatasetProvider:
 
 if __name__ == "__main__":
 
-  dataset = DatasetProvider(properties.train)
+  dataset = DatasetProvider([properties.train, properties.test])
   print 'alphabet size:', len(dataset.alphabet)
   x,y = dataset.load(properties.test)
   print 'max seq len:', max([len(s) for s in x])

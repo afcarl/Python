@@ -1,3 +1,15 @@
+# To do
+
+Play some more with data representations. Try again only e1 ... e2 type represenation which gave me F1=0.52
+
+# Experiments
+
+* F1 around 0.16 for <e> event </e> ... <e> event2 </e> ...
+* F1 < 0.50 for <e1> event </e1> ... <e2> event2 </e> ...
+* F1 0.39 for two words on the left of e and 0 words on the right
+* F1 0.5236 2-word context with args enclosed in <arg1></arg1> and <arg2></arg2>
+* F1 0.5266 same as above + learning alphabet from train+dev
+
 # Examples
 
 contains|echocardiogram noted
@@ -70,18 +82,3 @@ label2int = {
   'terminates':9
   }
 
-# To Do
-
-* Initialize with MIMIC III embeddings
-
-* Dropout
-
-* Convert ':' characters to separate tokens
-
-* Convert numeric tokens into numeric_token
-
-* Neural network that accepts two arg headwords (vectors) and classifies the relation between them. Learn/update embeddings. Concatenate vs. average the embeddingss.
-
-* Make above part of a larger network that classifies context + head words
-
-* Insert separator tokens between arguments and context

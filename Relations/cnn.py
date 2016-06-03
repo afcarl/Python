@@ -17,12 +17,13 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 import dataset
-import properties
+import properties 
 
 if __name__ == "__main__":
 
   # learn alphabet from training data
-  dataset = dataset.DatasetProvider(properties.train)
+  dataset = dataset.DatasetProvider([properties.train,
+                                     properties.test])
   # now load training examples and labels
   train_x, train_y = dataset.load(properties.train)
   # now load test examples and labels
