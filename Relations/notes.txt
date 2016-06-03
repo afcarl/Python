@@ -9,6 +9,7 @@ Play some more with data representations. Try again only e1 ... e2 type represen
 * F1 0.39 for two words on the left of e and 0 words on the right
 * F1 0.5236 2-word context with args enclosed in <arg1></arg1> and <arg2></arg2>
 * F1 0.5266 same as above + learning alphabet from train+dev
+* F1 0.5369 added a hidden layer after convolution
 
 # Examples
 
