@@ -2,7 +2,12 @@
 
 Play some more with data representations. Try again only e1 ... e2 type represenation which gave me F1=0.52
 
-# Experiments
+# Experiments with LSTM
+
+* LSTM(64) / embedding dropout=0.2, watermelon, F1 = 0.5532
+* GRU(64) / embedding dropout=0.2, watermelon, F1 = 0.5591
+
+# Experiments with CNN
 
 * F1 around 0.16 for <e> event </e> ... <e> event2 </e> ...
 * F1 < 0.50 for <e1> event </e1> ... <e2> event2 </e> ...
