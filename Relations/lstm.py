@@ -10,13 +10,12 @@ np.random.seed(1337)
 import sklearn as sk
 from sklearn.metrics import f1_score
 import keras as k
-import keras.utils.np_utils
+from keras.utils import np_utils
 from keras.preprocessing import sequence
 from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import Convolution1D, MaxPooling1D
+from keras.layers.core import Dense, Dropout, Activation
 from keras.layers.embeddings import Embedding
-from keras.layers import LSTM, SimpleRNN, GRU
+from keras.layers import LSTM
 
 import dataset
 import properties 
@@ -35,9 +34,9 @@ if __name__ == "__main__":
   maxlen = max([len(seq) for seq in train_x + test_x])
   classes = len(set(train_y))
   train_x = sequence.pad_sequences(train_x, maxlen=maxlen)
-  train_y = k.utils.np_utils.to_categorical(np.array(train_y), classes)  
+  train_y = np_utils.to_categorical(np.array(train_y), classes)  
   test_x = sequence.pad_sequences(test_x, maxlen=maxlen)
-  test_y = k.utils.np_utils.to_categorical(np.array(test_y), classes)  
+  test_y = np_utils.to_categorical(np.array(test_y), classes)  
 
   print 'train_x shape:', train_x.shape
   print 'train_y shape:', train_y.shape
@@ -51,24 +50,24 @@ if __name__ == "__main__":
                       input_length=maxlen,
                       dropout=0.2,
                       weights=None)) 
-  
   model.add(LSTM(64))
-
   model.add(Dense(classes))
   model.add(Activation('softmax'))
+
   model.summary()
+  
   model.compile(loss='categorical_crossentropy',
                 optimizer='rmsprop',
                 metrics=['accuracy'])
   model.fit(train_x,
             train_y,
-            nb_epoch=5,
-            batch_size=50,
+            nb_epoch=properties.epochs,
+            batch_size=properties.batch,
             verbose=1,
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_x, batch_size=50)
+  distribution = model.predict(test_x, batch_size=properties.batch)
   # class predictions
   predictions = np.argmax(distribution, axis=1)
   # gold labels
