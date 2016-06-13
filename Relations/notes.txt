@@ -4,6 +4,7 @@ Play some more with data representations. Try again only e1 ... e2 type represen
 
 # Experiments with LSTM
 
+* LSTM with non-arg events marked as <e>...</e> F1 = 0.54885
 * LSTM(64) / embedding dropout=0.2, watermelon, F1 = 0.5532
 * GRU(64) / embedding dropout=0.2, watermelon, F1 = 0.5591
 * LSTM with large number of epochs improves F1 for other relations but worse for Contains
