@@ -4,7 +4,6 @@ import sys
 sys.dont_write_bytecode = True
 
 import glob, string, collections, operator
-import properties
 
 label2int = {
   'none':0,

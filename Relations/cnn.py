@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
+import numpy as np
+np.random.seed(1337)
+
 import sys
 sys.path.append('../Lib/')
 sys.dont_write_bytecode = True
-
-import numpy as np
-np.random.seed(1337)
 
 import sklearn as sk
 from sklearn.metrics import f1_score
@@ -17,17 +17,20 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 import dataset
-import properties 
+import ConfigParser
 
 if __name__ == "__main__":
 
+  cfg = ConfigParser.ConfigParser()
+  cfg.read('settings.ini')
+
   # learn alphabet from training data
-  dataset = dataset.DatasetProvider([properties.train,
-                                     properties.test])
+  dataset = dataset.DatasetProvider([cfg.get('data', 'train'),
+                                     cfg.get('data', 'test')])
   # now load training examples and labels
-  train_x, train_y = dataset.load(properties.train)
+  train_x, train_y = dataset.load(cfg.get('data', 'train'))
   # now load test examples and labels
-  test_x, test_y = dataset.load(properties.test)
+  test_x, test_y = dataset.load(cfg.get('data', 'test'))
 
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in train_x + test_x])
@@ -45,12 +48,12 @@ if __name__ == "__main__":
   model = k.models.Sequential()
     
   model.add(Embedding(len(dataset.alphabet),
-                      properties.embdims,
+                      cfg.getint('cnn', 'embdims'),
                       input_length=maxlen,
                       weights=None)) 
 
-  model.add(Convolution1D(nb_filter=properties.filters,
-                          filter_length=properties.filtlen,
+  model.add(Convolution1D(nb_filter=cfg.getint('cnn', 'filters'),
+                          filter_length=cfg.getint('cnn', 'filtlen'),
                           border_mode='valid',
                           activation='relu',
                           subsample_length=1))
@@ -61,22 +64,25 @@ if __name__ == "__main__":
   model.add(Dropout(0.2))
   model.add(Activation('relu'))
 
-  model.add(Dropout(properties.dropout))
+  model.add(Dropout(cfg.getfloat('cnn', 'dropout')))
   model.add(Dense(classes))
   model.add(Activation('softmax'))
-  
+
+  model.summary()
+
   model.compile(loss='categorical_crossentropy',
                 optimizer='rmsprop',
                 metrics=['accuracy'])
   model.fit(train_x,
             train_y,
-            nb_epoch=properties.epochs,
-            batch_size=properties.batch,
+            nb_epoch=cfg.getint('cnn', 'epochs'),
+            batch_size=cfg.getint('cnn', 'batch'),
             verbose=1,
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_x, batch_size=properties.batch)
+  distribution = model.predict(test_x,
+                               batch_size=cfg.getint('cnn', 'batch'))
   # class predictions
   predictions = np.argmax(distribution, axis=1)
   # gold labels

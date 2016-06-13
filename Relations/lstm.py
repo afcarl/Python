@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
+import numpy as np
+np.random.seed(1337)
+
 import sys
 sys.path.append('../Lib/')
 sys.dont_write_bytecode = True
-
-import numpy as np
-np.random.seed(1337)
 
 import sklearn as sk
 from sklearn.metrics import f1_score
@@ -16,19 +16,21 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.layers.embeddings import Embedding
 from keras.layers import LSTM
-
 import dataset
-import properties 
+import ConfigParser
 
 if __name__ == "__main__":
 
+  cfg = ConfigParser.ConfigParser()
+  cfg.read('settings.ini')
+  
   # learn alphabet from training data
-  dataset = dataset.DatasetProvider([properties.train,
-                                     properties.test])
+  dataset = dataset.DatasetProvider([cfg.get('data', 'train'),
+                                     cfg.get('data', 'test')])
   # now load training examples and labels
-  train_x, train_y = dataset.load(properties.train)
+  train_x, train_y = dataset.load(cfg.get('data', 'train'))
   # now load test examples and labels
-  test_x, test_y = dataset.load(properties.test)
+  test_x, test_y = dataset.load(cfg.get('data', 'test'))
 
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in train_x + test_x])
@@ -46,7 +48,7 @@ if __name__ == "__main__":
   model = k.models.Sequential()
     
   model.add(Embedding(len(dataset.alphabet),
-                      properties.embdims,
+                      cfg.getint('lstm', 'embdims'),
                       input_length=maxlen,
                       dropout=0.2,
                       weights=None)) 
@@ -61,13 +63,14 @@ if __name__ == "__main__":
                 metrics=['accuracy'])
   model.fit(train_x,
             train_y,
-            nb_epoch=properties.epochs,
-            batch_size=properties.batch,
+            nb_epoch=cfg.getint('lstm', 'epochs'),
+            batch_size=cfg.getint('lstm', 'batches'),
             verbose=1,
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_x, batch_size=properties.batch)
+  distribution = model.predict(test_x,
+                               batch_size=cfg.getint('lstm', 'batches'))
   # class predictions
   predictions = np.argmax(distribution, axis=1)
   # gold labels
