@@ -51,7 +51,6 @@ if __name__ == "__main__":
                       cfg.getint('cnn', 'embdims'),
                       input_length=maxlen,
                       weights=None)) 
-
   model.add(Convolution1D(nb_filter=cfg.getint('cnn', 'filters'),
                           filter_length=cfg.getint('cnn', 'filtlen'),
                           border_mode='valid',

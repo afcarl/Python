@@ -72,11 +72,14 @@ if __name__ == "__main__":
   right.add(MaxPooling1D(pool_length=2))
   right.add(Flatten())
   
-  merged = Merge([left, right], mode='concat')
-
   model = k.models.Sequential()
-  model.add(merged)
+  model.add(Merge([left, right], mode='concat'))
 
+  model.add(Dense(250))
+  model.add(Dropout(0.2))
+  model.add(Activation('relu'))
+
+  model.add(Dropout(cfg.getfloat('cnn', 'dropout')))
   model.add(Dense(classes))
   model.add(Activation('softmax'))
 
