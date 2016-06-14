@@ -91,7 +91,7 @@ if __name__ == "__main__":
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_x,
+  distribution = model.predict([test_x, test_x],
                                batch_size=cfg.getint('cnn', 'batches'))
   # class predictions
   predictions = np.argmax(distribution, axis=1)
