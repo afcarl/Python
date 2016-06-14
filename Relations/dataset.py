@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
+import numpy as np
+np.random.seed(1337)
+
 import sys
 sys.dont_write_bytecode = True
+
+import ConfigParser
 
 import glob, string, collections, operator
 
@@ -56,9 +61,15 @@ class DatasetProvider:
 
 if __name__ == "__main__":
 
-  dataset = DatasetProvider([properties.train, properties.test])
+  cfg = ConfigParser.ConfigParser()
+  cfg.read('settings.ini')
+
+  dataset = DatasetProvider([cfg.get('data', 'train'),
+                             cfg.get('data', 'test')])
   print 'alphabet size:', len(dataset.alphabet)
-  x,y = dataset.load(properties.test)
+  
+  x,y = dataset.load(cfg.get('data', 'test'))
+
   print 'max seq len:', max([len(s) for s in x])
   print 'number of examples:', len(x)
   print 'number of labels:', len(set(y))

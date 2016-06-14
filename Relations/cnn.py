@@ -76,13 +76,13 @@ if __name__ == "__main__":
   model.fit(train_x,
             train_y,
             nb_epoch=cfg.getint('cnn', 'epochs'),
-            batch_size=cfg.getint('cnn', 'batch'),
+            batch_size=cfg.getint('cnn', 'batches'),
             verbose=1,
             validation_split=0.1)
 
   # distribution over classes
   distribution = model.predict(test_x,
-                               batch_size=cfg.getint('cnn', 'batch'))
+                               batch_size=cfg.getint('cnn', 'batches'))
   # class predictions
   predictions = np.argmax(distribution, axis=1)
   # gold labels
