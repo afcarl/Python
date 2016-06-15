@@ -11,7 +11,7 @@ Play some more with data representations. Try again only e1 ... e2 type represen
 
 # Experiments with CNN
 
-* F1 = 0.5462 for filter sizes 1,2
+* F1 = 0.5462 for filter sizes 1,2 (is this best performance now)?
 * F1 = 0.5158 for filter size 2,3
 * F1 around 0.16 for <e> event </e> ... <e> event2 </e> ...
 * F1 < 0.50 for <e1> event </e1> ... <e2> event2 </e> ...
