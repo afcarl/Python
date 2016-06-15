@@ -1,6 +1,9 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
-import numpy, os, os.path
+import numpy as np
+np.random.seed(1337)
+
+import os, os.path
 
 class Model:
   """Represents a word2vec model"""
@@ -21,13 +24,13 @@ class Model:
           continue
         word = elements[0]
         vector = [float(element) for element in elements[1:self.dimensions+1]]
-        self.vectors[word] = numpy.array(vector)
+        self.vectors[word] = np.array(vector)
 
   def select_vectors(self, alphabet):
     """Return vectors for items in alphabet"""
 
     average = self.average_words(alphabet.keys())
-    vecs = numpy.zeros((len(alphabet), self.dimensions))
+    vecs = np.zeros((len(alphabet), self.dimensions))
 
     for word, index in alphabet.items():
       if word in self.vectors:
@@ -41,7 +44,7 @@ class Model:
     """Compute average vector for a list of words"""
 
     words_found = 0 # words in vocabulary
-    sum = numpy.zeros(self.dimensions)
+    sum = np.zeros(self.dimensions)
     for word in words:
       if word in self.vectors:
         sum = sum + self.vectors[word]
@@ -61,7 +64,7 @@ class Model:
         average = self.average_words(line.split())
         matrix.append(list(average))
 
-    numpy.savetxt(outfile, numpy.array(matrix))
+    np.savetxt(outfile, np.array(matrix))
       
 if __name__ == "__main__":
 
