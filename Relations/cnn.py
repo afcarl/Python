@@ -13,6 +13,7 @@ import keras as k
 import keras.utils.np_utils
 from keras.preprocessing import sequence
 from keras.models import Sequential
+from keras.layers import Merge
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
@@ -24,7 +25,7 @@ if __name__ == "__main__":
   cfg = ConfigParser.ConfigParser()
   cfg.read('settings.ini')
 
-  # learn alphabet from training data
+  # learn alphabet from training and test data
   dataset = dataset.DatasetProvider([cfg.get('data', 'train'),
                                      cfg.get('data', 'test')])
   # now load training examples and labels
@@ -40,25 +41,37 @@ if __name__ == "__main__":
   test_x = sequence.pad_sequences(test_x, maxlen=maxlen)
   test_y = k.utils.np_utils.to_categorical(np.array(test_y), classes)  
 
-  print 'train_x shape:', train_x.shape
+  print '\ntrain_x shape:', train_x.shape
   print 'train_y shape:', train_y.shape
-  print 'test_x shape:', test_x.shape
-  print 'test_y shape:', test_y.shape
-  
-  model = k.models.Sequential()
-    
-  model.add(Embedding(len(dataset.alphabet),
-                      cfg.getint('cnn', 'embdims'),
-                      input_length=maxlen,
-                      weights=None)) 
-  model.add(Convolution1D(nb_filter=cfg.getint('cnn', 'filters'),
-                          filter_length=cfg.getint('cnn', 'filtlen'),
-                          border_mode='valid',
-                          activation='relu',
-                          subsample_length=1))
-  model.add(MaxPooling1D(pool_length=2))
-  model.add(Flatten())
+  print '\ntest_x shape:', test_x.shape
+  print 'test_y shape:', test_y.shape, '\n'
 
+  branches = [] # models to be merged
+  train_xs = [] # train x for each branch 
+  test_xs = []  # test x for each branch
+  
+  for filter_len in cfg.get('cnn', 'filtlen').split(','):
+
+    branch = k.models.Sequential()
+    branch.add(Embedding(len(dataset.alphabet),
+                         cfg.getint('cnn', 'embdims'),
+                         input_length=maxlen,
+                         weights=None)) 
+    branch.add(Convolution1D(nb_filter=cfg.getint('cnn', 'filters'),
+                             filter_length=int(filter_len),
+                             border_mode='valid',
+                             activation='relu',
+                             subsample_length=1))
+    branch.add(MaxPooling1D(pool_length=2))
+    branch.add(Flatten())
+
+    branches.append(branch)
+    train_xs.append(train_x)
+    test_xs.append(test_x)
+
+  model = k.models.Sequential()
+  model.add(Merge(branches, mode='concat'))
+    
   model.add(Dense(250))
   model.add(Dropout(0.2))
   model.add(Activation('relu'))
@@ -72,7 +85,7 @@ if __name__ == "__main__":
   model.compile(loss='categorical_crossentropy',
                 optimizer='rmsprop',
                 metrics=['accuracy'])
-  model.fit(train_x,
+  model.fit(train_xs,
             train_y,
             nb_epoch=cfg.getint('cnn', 'epochs'),
             batch_size=cfg.getint('cnn', 'batches'),
@@ -80,7 +93,7 @@ if __name__ == "__main__":
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_x,
+  distribution = model.predict(test_xs,
                                batch_size=cfg.getint('cnn', 'batches'))
   # class predictions
   predictions = np.argmax(distribution, axis=1)

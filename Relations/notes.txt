@@ -11,6 +11,7 @@ Play some more with data representations. Try again only e1 ... e2 type represen
 
 # Experiments with CNN
 
+* 06/15 ran cnn.py and F1 now lower than before (0.5). Investigate.
 * F1 = 0.5462 for filter sizes 1,2 (is this best performance now)?
 * F1 = 0.5158 for filter size 2,3
 * F1 around 0.16 for <e> event </e> ... <e> event2 </e> ...
