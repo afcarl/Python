@@ -56,8 +56,6 @@ if __name__ == "__main__":
   model.add(Dense(classes))
   model.add(Activation('softmax'))
 
-  model.summary()
-  
   model.compile(loss='categorical_crossentropy',
                 optimizer='rmsprop',
                 metrics=['accuracy'])
