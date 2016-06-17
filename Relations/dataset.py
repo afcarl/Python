@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import numpy as np
-np.random.seed(1337)
 
 import sys
 sys.dont_write_bytecode = True

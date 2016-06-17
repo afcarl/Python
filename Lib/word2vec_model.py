@@ -1,7 +1,6 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python -B
 
 import numpy as np
-np.random.seed(1337)
 
 import os, os.path
 
