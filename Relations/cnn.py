@@ -11,6 +11,7 @@ import sklearn as sk
 from sklearn.metrics import f1_score
 import keras as k
 import keras.utils.np_utils
+from keras.optimizers import RMSprop
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers import Merge
@@ -81,7 +82,7 @@ if __name__ == "__main__":
   model.add(Activation('softmax'))
 
   model.compile(loss='categorical_crossentropy',
-                optimizer='rmsprop',
+                optimizer=RMSprop(lr=0.0001, rho=0.9, epsilon=1e-08),
                 metrics=['accuracy'])
   model.fit(train_xs,
             train_y,
