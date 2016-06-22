@@ -98,3 +98,13 @@ label2int = {
   'terminates':9
   }
 
+
+# cTAKES system
+
+P	R	F1	#gold	#system	#correct
+0.582	0.554	0.568	2680	2553	1486	OVERALL
+
+System predict relations #: 2553
+# of system relations whose arguments are close: 1538
+Gold relations #: 2680
+# of gold relations whose arguments are close: 1670

@@ -66,7 +66,7 @@ if __name__ == "__main__":
   dataset = DatasetProvider([cfg.get('data', 'train'),
                              cfg.get('data', 'test')])
   print 'alphabet size:', len(dataset.alphabet)
-  
+
   x,y = dataset.load(cfg.get('data', 'test'))
 
   print 'max seq len:', max([len(s) for s in x])
@@ -74,3 +74,7 @@ if __name__ == "__main__":
   print 'number of labels:', len(set(y))
   print 'label counts:', collections.Counter(y)
   print 'first 10 examples:', x[:10]
+  print 'class proportions:'
+  counter = collections.Counter(y)
+  for label in counter:
+    print label, counter[label] / float(len(y)), float(len(y)) / counter[label]
