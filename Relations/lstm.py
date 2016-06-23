@@ -29,6 +29,7 @@ if __name__ == "__main__":
   print 'batches:', cfg.get('lstm', 'batches')
   print 'epochs:', cfg.get('lstm', 'epochs')
   print 'embdims:', cfg.get('lstm', 'embdims')
+  print 'dropout:', cfg.get('lstm', 'dropout')
   print 'learnrt:', cfg.get('lstm', 'learnrt')
   
   # learn alphabet from training data
@@ -58,7 +59,7 @@ if __name__ == "__main__":
   model.add(Embedding(len(dataset.alphabet),
                       cfg.getint('lstm', 'embdims'),
                       input_length=maxlen,
-                      dropout=0.2,
+                      dropout=cfg.getint('lstm', 'embdims'),
                       weights=None)) 
   model.add(LSTM(64))
   model.add(Dense(classes))
