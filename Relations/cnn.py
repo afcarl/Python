@@ -10,9 +10,9 @@ sys.dont_write_bytecode = True
 import sklearn as sk
 from sklearn.metrics import f1_score
 import keras as k
-import keras.utils.np_utils
+from keras.utils.np_utils import to_categorical
 from keras.optimizers import RMSprop
-from keras.preprocessing import sequence
+from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.layers import Merge
 from keras.layers.core import Dense, Dropout, Activation, Flatten
@@ -37,10 +37,10 @@ if __name__ == "__main__":
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in train_x + test_x])
   classes = len(set(train_y))
-  train_x = sequence.pad_sequences(train_x, maxlen=maxlen)
-  train_y = k.utils.np_utils.to_categorical(np.array(train_y), classes)  
-  test_x = sequence.pad_sequences(test_x, maxlen=maxlen)
-  test_y = k.utils.np_utils.to_categorical(np.array(test_y), classes)  
+  train_x = pad_sequences(train_x, maxlen=maxlen)
+  train_y = to_categorical(np.array(train_y), classes)  
+  test_x = pad_sequences(test_x, maxlen=maxlen)
+  test_y = to_categorical(np.array(test_y), classes)  
 
   print '\ntrain_x shape:', train_x.shape
   print 'train_y shape:', train_y.shape
@@ -53,7 +53,7 @@ if __name__ == "__main__":
   
   for filter_len in cfg.get('cnn', 'filtlen').split(','):
 
-    branch = k.models.Sequential()
+    branch = Sequential()
     branch.add(Embedding(len(dataset.alphabet),
                          cfg.getint('cnn', 'embdims'),
                          input_length=maxlen,
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     train_xs.append(train_x)
     test_xs.append(test_x)
 
-  model = k.models.Sequential()
+  model = Sequential()
   model.add(Merge(branches, mode='concat'))
     
   model.add(Dense(250))
