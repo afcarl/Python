@@ -25,10 +25,18 @@ if __name__ == "__main__":
 
   cfg = ConfigParser.ConfigParser()
   cfg.read('settings.ini')
+  print 'train:', cfg.get('data', 'train')
+  print 'test:', cfg.get('data', 'test')
+  print 'batches:', cfg.get('cnn', 'batches')
+  print 'epochs:', cfg.get('cnn', 'embdims')
+  print 'filters:', cfg.get('cnn', 'filters')
+  print 'filtlen:', cfg.get('cnn', 'filtlen')
+  print 'dropout:', cfg.get('cnn', 'dropout')
 
   # learn alphabet from training and test data
-  dataset = dataset.DatasetProvider([cfg.get('data', 'train'),
-                                     cfg.get('data', 'test')])
+  dataset = \
+    dataset.DatasetProvider([cfg.get('data', 'train'),
+                             cfg.get('data', 'test')])
   # now load training examples and labels
   train_x, train_y = dataset.load(cfg.get('data', 'train'))
   # now load test examples and labels
@@ -71,18 +79,27 @@ if __name__ == "__main__":
     test_xs.append(test_x)
 
   model = Sequential()
-  model.add(Merge(branches, mode='concat'))
+
+  # keras merge only works if there is more than one layer
+  if len(cfg.get('cnn', 'filtlen').split(',')) > 1:
+    model.add(Merge(branches, mode='concat'))
+  else:
+    model.add(branches[0])
+    train_xs = train_x
+    test_xs = test_x
     
   model.add(Dense(250))
-  model.add(Dropout(0.2))
+  model.add(Dropout(cfg.getfloat('cnn', 'dropout')))
   model.add(Activation('relu'))
 
   model.add(Dropout(cfg.getfloat('cnn', 'dropout')))
   model.add(Dense(classes))
   model.add(Activation('softmax'))
 
+  optimizer = RMSprop(lr=cfg.getfloat('cnn', 'learnrt'),
+                      rho=0.9, epsilon=1e-08)
   model.compile(loss='categorical_crossentropy',
-                optimizer=RMSprop(lr=0.0001, rho=0.9, epsilon=1e-08),
+                optimizer=optimizer,
                 metrics=['accuracy'])
   model.fit(train_xs,
             train_y,
@@ -92,8 +109,8 @@ if __name__ == "__main__":
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_xs,
-                               batch_size=cfg.getint('cnn', 'batches'))
+  distribution = \
+    model.predict(test_xs, batch_size=cfg.getint('cnn', 'batches'))
   # class predictions
   predictions = np.argmax(distribution, axis=1)
   # gold labels
