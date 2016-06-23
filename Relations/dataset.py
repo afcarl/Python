@@ -9,20 +9,7 @@ import ConfigParser
 
 import glob, string, collections, operator
 
-label2int1 = {
-  'none':0,
-  'contains':1,
-  'before':2,
-  'begins-on':3,
-  'continues':4,
-  'ends-on':5,
-  'initiates':6,
-  'overlap':7,
-  'reinitiates':8,
-  'terminates':9
-  }
-
-label2int2 = {
+label2int = {
   'none':0,
   'contains':1,
   'contains-1':2
@@ -60,7 +47,7 @@ class DatasetProvider:
       for unigram in text.split():
         example.append(self.alphabet[unigram])
       examples.append(example)
-      labels.append(label2int2[label])
+      labels.append(label2int[label])
 
     return examples, labels
 
