@@ -28,10 +28,12 @@ if __name__ == "__main__":
   print 'train:', cfg.get('data', 'train')
   print 'test:', cfg.get('data', 'test')
   print 'batches:', cfg.get('cnn', 'batches')
-  print 'epochs:', cfg.get('cnn', 'embdims')
+  print 'epochs:', cfg.get('cnn', 'epochs')
+  print 'embdims:', cfg.get('cnn', 'embdims')
   print 'filters:', cfg.get('cnn', 'filters')
   print 'filtlen:', cfg.get('cnn', 'filtlen')
   print 'dropout:', cfg.get('cnn', 'dropout')
+  print 'learnrt:', cfg.get('cnn', 'learnrt')
 
   # learn alphabet from training and test data
   dataset = \
@@ -50,9 +52,9 @@ if __name__ == "__main__":
   test_x = pad_sequences(test_x, maxlen=maxlen)
   test_y = to_categorical(np.array(test_y), classes)  
 
-  print '\ntrain_x shape:', train_x.shape
+  print 'train_x shape:', train_x.shape
   print 'train_y shape:', train_y.shape
-  print '\ntest_x shape:', test_x.shape
+  print 'test_x shape:', test_x.shape
   print 'test_y shape:', test_y.shape, '\n'
 
   branches = [] # models to be merged

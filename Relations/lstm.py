@@ -10,8 +10,9 @@ sys.dont_write_bytecode = True
 import sklearn as sk
 from sklearn.metrics import f1_score
 import keras as k
-from keras.utils import np_utils
-from keras.preprocessing import sequence
+from keras.utils.np_utils import to_categorical
+from keras.optimizers import RMSprop
+from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.layers.embeddings import Embedding
@@ -23,10 +24,17 @@ if __name__ == "__main__":
 
   cfg = ConfigParser.ConfigParser()
   cfg.read('settings.ini')
+  print 'train:', cfg.get('data', 'train')
+  print 'test:', cfg.get('data', 'test')
+  print 'batches:', cfg.get('lstm', 'batches')
+  print 'epochs:', cfg.get('lstm', 'epochs')
+  print 'embdims:', cfg.get('lstm', 'embdims')
+  print 'learnrt:', cfg.get('lstm', 'learnrt')
   
   # learn alphabet from training data
-  dataset = dataset.DatasetProvider([cfg.get('data', 'train'),
-                                     cfg.get('data', 'test')])
+  dataset = \
+    dataset.DatasetProvider([cfg.get('data', 'train'),
+                             cfg.get('data', 'test')])
   # now load training examples and labels
   train_x, train_y = dataset.load(cfg.get('data', 'train'))
   # now load test examples and labels
@@ -35,17 +43,17 @@ if __name__ == "__main__":
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in train_x + test_x])
   classes = len(set(train_y))
-  train_x = sequence.pad_sequences(train_x, maxlen=maxlen)
-  train_y = np_utils.to_categorical(np.array(train_y), classes)  
-  test_x = sequence.pad_sequences(test_x, maxlen=maxlen)
-  test_y = np_utils.to_categorical(np.array(test_y), classes)  
+  train_x = pad_sequences(train_x, maxlen=maxlen)
+  train_y = to_categorical(np.array(train_y), classes)  
+  test_x = pad_sequences(test_x, maxlen=maxlen)
+  test_y = to_categorical(np.array(test_y), classes)  
 
   print 'train_x shape:', train_x.shape
   print 'train_y shape:', train_y.shape
   print 'test_x shape:', test_x.shape
   print 'test_y shape:', test_y.shape
   
-  model = k.models.Sequential()
+  model = Sequential()
     
   model.add(Embedding(len(dataset.alphabet),
                       cfg.getint('lstm', 'embdims'),
@@ -56,8 +64,10 @@ if __name__ == "__main__":
   model.add(Dense(classes))
   model.add(Activation('softmax'))
 
+  optimizer = RMSprop(lr=cfg.getfloat('lstm', 'learnrt'),
+                      rho=0.9, epsilon=1e-08)
   model.compile(loss='categorical_crossentropy',
-                optimizer='rmsprop',
+                optimizer=optimizer,
                 metrics=['accuracy'])
   model.fit(train_x,
             train_y,
@@ -67,8 +77,8 @@ if __name__ == "__main__":
             validation_split=0.1)
 
   # distribution over classes
-  distribution = model.predict(test_x,
-                               batch_size=cfg.getint('lstm', 'batches'))
+  distribution = \
+    model.predict(test_x, batch_size=cfg.getint('lstm', 'batches'))
   # class predictions
   predictions = np.argmax(distribution, axis=1)
   # gold labels
