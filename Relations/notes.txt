@@ -2,7 +2,32 @@
 
 Play some more with data representations. Try again only e1 ... e2 type represenation which gave me F1=0.52
 
-# Experiments with LSTM
+
+# Experiments with CNN with contains/contains-1
+
+Getting f1 for contains: 0.55186440678
+all scores: [ 0.9728062   0.55186441  0.        ]
+
+On WM GPU with these settings:
+
+batches = 50
+epochs = 3
+embdims = 300
+filters = 100
+filtlen = 2,3,4
+dropout = 0.25
+learnrt = 0.0001
+
+# Experiments with LSTM with contains/contains-1
+
+Getting f1 for contains: 0.539354294155
+all scores: [ 0.97029156  0.53935429  0.10397554]
+
+batches = 50
+epochs = 3
+embdims = 300
+
+# Experiments with LSTM (old data representation)
 
 * Bi-directional LSTM, F1 = 0.4771
 * LSTM with non-arg events marked as <e>...</e> F1 = 0.54885
@@ -10,7 +35,7 @@ Play some more with data representations. Try again only e1 ... e2 type represen
 * GRU(64) / embedding dropout=0.2, watermelon, F1 = 0.5591
 * LSTM with large number of epochs improves F1 for other relations but worse for Contains
 
-# Experiments with CNN
+# Experiments with CNN (old data representation)
 
 * 06/15 ran cnn.py and F1 now lower than before (0.5). Investigate.
 * F1 = 0.5462 for filter sizes 1,2 (is this best performance now)?
