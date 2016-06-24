@@ -13,6 +13,12 @@ learnrt: 0.0001
 f1 for contains: 0.702775119617
 all f1s: [ 0.89402565  0.70724191  0.        ]
 
+# CNN / Watermelon / CPU
+
+params as above
+f1 for contains: 0.686253484881
+all f1s: [ 0.90350703  0.69114471  0.        ]
+
 # LSTM / Watermelon / GPU
 
 train: /home/dima/Data/Thyme/Deep/EventTime/train.txt
@@ -25,6 +31,12 @@ learnrt: 0.001
 
 f1 for contains: 0.662850132897
 all f1s: [ 0.88969356  0.66735282  0.        ]
+
+# LSTM / Watermelon / CPU
+
+params as above
+f1 for contains: 0.666341780377
+all f1s: [ 0.85052755  0.66971578  0.05882353]
 
 # ClearTK system
 
