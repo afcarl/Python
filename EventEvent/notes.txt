@@ -1,8 +1,5 @@
 # To do
 
-Play some more with data representations. Try again only e1 ... e2 type represenation which gave me F1=0.52
-
-
 # Experiments with CNN with contains/contains-1
 
 Getting f1 for contains: 0.55186440678
