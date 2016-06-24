@@ -1,3 +1,18 @@
+# Watermelon / GPU
+
+train: /home/dima/Data/Thyme/Deep/EventTime/train.txt
+test: /home/dima/Data/Thyme/Deep/EventTime/dev.txt
+batches: 50
+epochs: 3
+embdims: 300
+filters: 200
+filtlen: 3,4,5
+dropout: 0.25
+learnrt: 0.0001
+
+f1 for contains: 0.702775119617
+all f1s: [ 0.89402565  0.70724191  0.        ]
+  
 # ClearTK system
 
 P R F1  #gold #system #correct
