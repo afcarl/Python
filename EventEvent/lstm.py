@@ -23,7 +23,7 @@ import ConfigParser
 if __name__ == "__main__":
 
   cfg = ConfigParser.ConfigParser()
-  cfg.read('settings.ini')
+  cfg.read(sys.argv[1])
   print 'train:', cfg.get('data', 'train')
   print 'test:', cfg.get('data', 'test')
   print 'batches:', cfg.get('lstm', 'batches')
