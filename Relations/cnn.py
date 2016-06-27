@@ -82,15 +82,8 @@ if __name__ == "__main__":
     test_xs.append(test_x)
 
   model = Sequential()
-
-  # keras merge only works if there is more than one layer
-  if len(cfg.get('cnn', 'filtlen').split(',')) > 1:
-    model.add(Merge(branches, mode='concat'))
-  else:
-    model.add(branches[0])
-    train_xs = train_x
-    test_xs = test_x
-    
+  model.add(Merge(branches, mode='concat'))
+  
   model.add(Dense(250))
   model.add(Dropout(cfg.getfloat('cnn', 'dropout')))
   model.add(Activation('relu'))
