@@ -29,6 +29,7 @@ if __name__ == "__main__":
   print 'batches:', cfg.get('lstm', 'batches')
   print 'epochs:', cfg.get('lstm', 'epochs')
   print 'embdims:', cfg.get('lstm', 'embdims')
+  print 'units:', cfg.get('lstm', 'units')
   print 'dropout:', cfg.get('lstm', 'dropout')
   print 'learnrt:', cfg.get('lstm', 'learnrt')
   
@@ -61,7 +62,7 @@ if __name__ == "__main__":
                       input_length=maxlen,
                       dropout=cfg.getint('lstm', 'embdims'),
                       weights=None)) 
-  model.add(LSTM(64))
+  model.add(LSTM(cfg.getint('lstm', 'units')))
   model.add(Dense(classes))
   model.add(Activation('softmax'))
 
