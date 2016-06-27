@@ -33,6 +33,7 @@ if __name__ == "__main__":
   print 'embdims:', cfg.get('cnn', 'embdims')
   print 'filters:', cfg.get('cnn', 'filters')
   print 'filtlen:', cfg.get('cnn', 'filtlen')
+  print 'hidden:', cfg.get('cnn', 'hidden')
   print 'dropout:', cfg.get('cnn', 'dropout')
   print 'learnrt:', cfg.get('cnn', 'learnrt')
 
@@ -84,7 +85,7 @@ if __name__ == "__main__":
   model = Sequential()
   model.add(Merge(branches, mode='concat'))
   
-  model.add(Dense(250))
+  model.add(Dense(cfg.getint('cnn', 'hidden')))
   model.add(Dropout(cfg.getfloat('cnn', 'dropout')))
   model.add(Activation('relu'))
 
