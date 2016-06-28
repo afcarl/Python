@@ -20,9 +20,10 @@ from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 import dataset
 import ConfigParser
+import word2vec_model
 
 if __name__ == "__main__":
-
+  
   # settings file specified as command-line argument
   cfg = ConfigParser.ConfigParser()
   cfg.read(sys.argv[1])
@@ -46,6 +47,11 @@ if __name__ == "__main__":
   # now load test examples and labels
   test_x, test_y = dataset.load(cfg.get('data', 'test'))
 
+  # TODO: what what are we doing for index 0 (oov words)?                                                                                          
+  path = '/Users/Dima/Loyola/Data/Word2Vec/Models/mimic.txt'
+  word2vec = word2vec_model.Model(path)
+  init_vectors = word2vec.select_vectors(dataset.alphabet)
+  
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in train_x + test_x])
   classes = len(set(train_y))
@@ -69,7 +75,7 @@ if __name__ == "__main__":
     branch.add(Embedding(len(dataset.alphabet),
                          cfg.getint('cnn', 'embdims'),
                          input_length=maxlen,
-                         weights=None)) 
+                         weights=[init_vectors])) 
     branch.add(Convolution1D(nb_filter=cfg.getint('cnn', 'filters'),
                              filter_length=int(filter_len),
                              border_mode='valid',
