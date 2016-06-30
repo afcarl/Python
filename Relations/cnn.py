@@ -28,7 +28,7 @@ if __name__ == "__main__":
   cfg = ConfigParser.ConfigParser()
   cfg.read(sys.argv[1])
   print 'train:', cfg.get('data', 'train')
-  print 'test:', cfg.get('data', 'test')
+  print 'test:', cfg.get('data', 'test')  
   print 'batches:', cfg.get('cnn', 'batches')
   print 'epochs:', cfg.get('cnn', 'epochs')
   print 'embdims:', cfg.get('cnn', 'embdims')
@@ -47,11 +47,14 @@ if __name__ == "__main__":
   # now load test examples and labels
   test_x, test_y = dataset.load(cfg.get('data', 'test'))
 
-  # TODO: what what are we doing for index 0 (oov words)?                                                                                          
-  path = '/Users/Dima/Loyola/Data/Word2Vec/Models/mimic.txt'
-  word2vec = word2vec_model.Model(path)
-  init_vectors = word2vec.select_vectors(dataset.alphabet)
-  
+  init_vectors = None
+  # TODO: what what are we doing for index 0 (oov words)?
+  # use pre-trained word embeddings?
+  if cfg.has_option('data', 'embed'):
+    print 'embeddings:', cfg.get('data', 'embed')
+    word2vec = word2vec_model.Model(cfg.get('data', 'embed'))
+    init_vectors = [word2vec.select_vectors(dataset.alphabet)]
+
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in train_x + test_x])
   classes = len(set(train_y))
@@ -75,7 +78,7 @@ if __name__ == "__main__":
     branch.add(Embedding(len(dataset.alphabet),
                          cfg.getint('cnn', 'embdims'),
                          input_length=maxlen,
-                         weights=[init_vectors])) 
+                         weights=init_vectors)) 
     branch.add(Convolution1D(nb_filter=cfg.getint('cnn', 'filters'),
                              filter_length=int(filter_len),
                              border_mode='valid',
