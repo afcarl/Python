@@ -15,6 +15,21 @@ label2int = {
   'contains-1':2
   }
 
+# will have to do this eventually
+# label2int = {
+#   'none': 0,
+#   'contains': 1,
+#   'contains-1': 2,
+#   'before': 3,
+#   'before-1': 4,
+#   'begins-on': 5,
+#   'begins-on-1': 6,
+#   'ends-on': 7,
+#   'ends-on-1': 8,
+#   'overlap': 9,
+#   'overlap-1': 10,
+# }
+
 class DatasetProvider:
   """THYME relation data"""
   
