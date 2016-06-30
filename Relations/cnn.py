@@ -115,11 +115,6 @@ if __name__ == "__main__":
             validation_split=0.1,
             class_weight=None)
 
-  # distribution over classes
-distrib: (9902, 3)
-predictions: (9902,)
-gold: (9902,)
-
   # probability for each class; (test size, num of classes)
   distribution = \
     model.predict(test_xs, batch_size=cfg.getint('cnn', 'batches'))
