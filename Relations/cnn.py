@@ -19,8 +19,8 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
 from keras.layers.embeddings import Embedding
 import dataset
-import ConfigParser
 import word2vec_model
+import ConfigParser
 
 if __name__ == "__main__":
   
@@ -116,11 +116,16 @@ if __name__ == "__main__":
             class_weight=None)
 
   # distribution over classes
+distrib: (9902, 3)
+predictions: (9902,)
+gold: (9902,)
+
+  # probability for each class; (test size, num of classes)
   distribution = \
     model.predict(test_xs, batch_size=cfg.getint('cnn', 'batches'))
-  # class predictions
+  # class predictions; (test size,)
   predictions = np.argmax(distribution, axis=1)
-  # gold labels
+  # gold labels; (test size,)
   gold = np.argmax(test_y, axis=1)
   # f1s for contains + contains-1
   label_f1 = f1_score(gold, predictions, average=None)
