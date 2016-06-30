@@ -112,7 +112,8 @@ if __name__ == "__main__":
             nb_epoch=cfg.getint('cnn', 'epochs'),
             batch_size=cfg.getint('cnn', 'batches'),
             verbose=1,
-            validation_split=0.1)
+            validation_split=0.1,
+            class_weight=None)
 
   # distribution over classes
   distribution = \
