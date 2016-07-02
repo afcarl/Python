@@ -21,6 +21,11 @@ params as above
 f1 for contains: 0.686253484881
 all f1s: [ 0.90350703  0.69114471  0.        ]
 
+# CNN / Mac / CPU / Tensorflow
+
+f1 for contains: 0.711401182949
+all f1s: [ 0.90544259  0.71622177  0.        ]
+
 # LSTM / Watermelon / GPU
 
 train: /home/dima/Data/Thyme/Deep/EventTime/train.txt
