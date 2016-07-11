@@ -53,7 +53,7 @@ if __name__ == "__main__":
   if cfg.has_option('data', 'embed'):
     print 'embeddings:', cfg.get('data', 'embed')
     word2vec = word2vec_model.Model(cfg.get('data', 'embed'))
-    init_vectors = [word2vec.select_vectors(dataset.alphabet)]
+    init_vectors = [word2vec.select_vectors(dataset.word2int)]
 
   # turn x and y into numpy array among other things
   maxlen = max([len(seq) for seq in train_x + test_x])
@@ -75,7 +75,7 @@ if __name__ == "__main__":
   for filter_len in cfg.get('cnn', 'filtlen').split(','):
 
     branch = Sequential()
-    branch.add(Embedding(len(dataset.alphabet),
+    branch.add(Embedding(len(dataset.word2int),
                          cfg.getint('cnn', 'embdims'),
                          input_length=maxlen,
                          weights=init_vectors)) 
@@ -124,6 +124,8 @@ if __name__ == "__main__":
   gold = np.argmax(test_y, axis=1)
   # f1s for contains + contains-1
   label_f1 = f1_score(gold, predictions, average=None)
-  contains_f1 = f1_score(gold, predictions, labels=[1,2], average='micro')
+  idx = [dataset.label2int['contains'], dataset.label2int['contains-1']]
+  contains_f1 = f1_score(gold, predictions, labels=idx, average='micro')
+  print 'labels:', dataset.label2int
   print 'f1 for contains:', contains_f1
   print 'all f1s:', label_f1
