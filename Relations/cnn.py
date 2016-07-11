@@ -125,11 +125,9 @@ if __name__ == "__main__":
 
   # f1 scores
   label_f1 = f1_score(gold, predictions, average=None)
-  print 'labels:', dataset.label2int
-  print 'f1s =', label_f1
-
+  
   for label, idx in dataset.label2int.items():
-    print 'f1(%s)=%f' % (label, label_f1[idx])
+    print '\nf1(%s)=%f' % (label, label_f1[idx])
 
   if 'contains' in dataset.label2int:
     idxs = [dataset.label2int['contains'], dataset.label2int['contains-1']]

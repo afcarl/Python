@@ -85,12 +85,18 @@ if __name__ == "__main__":
   predictions = np.argmax(distribution, axis=1)
   # gold labels
   gold = np.argmax(test_y, axis=1)
-  # f1s for contains + contains-1
+
+  # f1 scores
   label_f1 = f1_score(gold, predictions, average=None)
-  print 'labels:', dataset.label2int
-  print 'f1s = ', label_f1
+  
+  for label, idx in dataset.label2int.items():
+    print '\nf1(%s)=%f' % (label, label_f1[idx])
 
   if 'contains' in dataset.label2int:
-    idx = [dataset.label2int['contains'], dataset.label2int['contains-1']]
-    contains_f1 = f1_score(gold, predictions, labels=idx, average='micro')
+    idxs = [dataset.label2int['contains'], dataset.label2int['contains-1']]
+    contains_f1 = f1_score(gold, predictions, labels=idxs, average='micro')
     print 'f1(contains) =', contains_f1
+  else:
+    idxs = dataset.label2int.values()
+    average_f1 = f1_score(gold, predictions, labels=idxs, average='micro')
+    print 'f1(all) =', average_f1
