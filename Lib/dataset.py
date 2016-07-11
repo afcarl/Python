@@ -69,7 +69,7 @@ class DatasetProvider:
 if __name__ == "__main__":
 
   cfg = ConfigParser.ConfigParser()
-  cfg.read('settings.ini')
+  cfg.read(sys.argv[1])
 
   dataset = DatasetProvider([cfg.get('data', 'train'),
                              cfg.get('data', 'test')])
