@@ -57,7 +57,7 @@ if __name__ == "__main__":
   
   model = Sequential()
     
-  model.add(Embedding(len(dataset.alphabet),
+  model.add(Embedding(len(dataset.word2int),
                       cfg.getint('lstm', 'embdims'),
                       input_length=maxlen,
                       dropout=cfg.getint('lstm', 'embdims'),
@@ -93,4 +93,4 @@ if __name__ == "__main__":
   if 'contains' in dataset.label2int:
     idx = [dataset.label2int['contains'], dataset.label2int['contains-1']]
     contains_f1 = f1_score(gold, predictions, labels=idx, average='micro')
-    print 'f1(contains) = ', contains_f1
+    print 'f1(contains) =', contains_f1
