@@ -1,5 +1,4 @@
 #!/usr/bin/env python                                                                     
-
 import sklearn as sk
 import numpy as np
 import sklearn.datasets

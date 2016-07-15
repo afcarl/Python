@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, pandas
+import sys, pandas, string
 sys.dont_write_bytecode = True
 
 base = '/Users/Dima/Loyola/Mount/'
@@ -27,9 +27,10 @@ def organize_files():
     elements = line.split('|')
     mrn = int(elements[0])
     text = elements[16]
+    printable = ''.join(c for c in text if c in string.printable)
     file_name = '%s/%s/%s.txt' % (out, mrn2label[mrn], mrn)
     out_file = open(file_name, 'a')
-    out_file.write(text + '\n')
+    out_file.write(printable + '\n')
     out_file.close()
     
 if __name__ == "__main__":
