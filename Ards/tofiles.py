@@ -3,13 +3,10 @@
 import sys, pandas
 sys.dont_write_bytecode = True
 
-
 base = '/Users/Dima/Loyola/Mount/'
 csv = base + 'ards/data/FinalDataSet_For_DimaDligach_7.11.2016.csv'
 data = base + 'ards/data/ards_patient_notes_07112016.txt'
 out = base + 'ards/text'
-# yes = base + 'ards/text/case/'  # cases
-# no = base + 'ards/text/noncase' # non-cases
 
 def map_mrn_to_label():
   """Dictionary mapping mrns to ards outcome"""
