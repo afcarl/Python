@@ -5,6 +5,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import LinearSVC
 from sklearn.cross_validation import train_test_split
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 
 notes_root = '/Users/Dima/Loyola/Mount/ards/text'
@@ -45,8 +47,13 @@ def run_cross_validation():
   model = classifier.fit(x_train, y_train)
   predicted = classifier.predict(x_test)
   print 'predictions:', predicted
+  print
 
+  precision = precision_score(y_test, predicted, pos_label=1)
+  recall = recall_score(y_test, predicted, pos_label=1)
   f1 = f1_score(y_test, predicted, pos_label=1)
+  print 'p =', precision
+  print 'r =', recall
   print 'f1 =', f1  
 
 if __name__ == "__main__":
