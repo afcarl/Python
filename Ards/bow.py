@@ -41,12 +41,12 @@ def run_cross_validation():
   x_train, x_test, y_train, y_test = train_test_split(
     tfidf_matrix, bunch.target, test_size = 0.1, random_state=0)
 
-  classifier = LinearSVC()
+  classifier = LinearSVC(class_weight='balanced')
   model = classifier.fit(x_train, y_train)
   predicted = classifier.predict(x_test)
   print 'predictions:', predicted
 
-  f1 = f1_score(y_test, predicted, pos_label=0)
+  f1 = f1_score(y_test, predicted, pos_label=1)
   print 'f1 =', f1  
 
 if __name__ == "__main__":
