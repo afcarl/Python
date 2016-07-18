@@ -13,7 +13,7 @@ notes_root = '/Users/Dima/Loyola/Mount/ards/text'
 feature_list = './features.txt'
 num_folds = 5
 ngram_range = (1, 2)
-min_df = 10
+min_df = 50
 
 def run_cross_validation():
   """Run n-fold CV and return average accuracy"""      
