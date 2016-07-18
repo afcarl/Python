@@ -1,11 +1,10 @@
 #!/usr/bin/env python                                                                     
+import sklearn as sk
 import numpy as np
-from sklearn.datasets import load_files
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.svm import LinearSVC
-from sklearn.cross_validation import train_test_split
-from sklearn.metrics import f1_score
+import sklearn.datasets
+import sklearn.feature_extraction.text
+import sklearn.cross_validation
+import sklearn.svm
 
 notes_root = '/Users/Dima/Loyola/Mount/ards/text'
 feature_list = './features.txt'
@@ -16,12 +15,12 @@ min_df = 10
 def run_cross_validation():
   """Run n-fold CV and return average accuracy"""      
 
-  bunch = load_files(notes_root)
+  bunch = sk.datasets.load_files(notes_root)
   print 'positive class:', bunch.target_names[1]
   print 'negative class:', bunch.target_names[0]
 
   # raw occurences
-  vectorizer = CountVectorizer(
+  vectorizer = sk.feature_extraction.text.CountVectorizer(
     ngram_range=ngram_range, 
     stop_words='english',
     min_df=min_df ,
@@ -35,19 +34,18 @@ def run_cross_validation():
     feature_file.write(feature + '\n')
   
   # tf-idf 
-  tf = TfidfTransformer()
+  tf = sk.feature_extraction.text.TfidfTransformer()
   tfidf_matrix = tf.fit_transform(count_matrix)
 
-  x_train, x_test, y_train, y_test = train_test_split(
-    tfidf_matrix, bunch.target, test_size = 0.1, random_state=0)
-
-  classifier = LinearSVC()
-  model = classifier.fit(x_train, y_train)
-  predicted = classifier.predict(x_test)
-  print 'predictions:', predicted
-
-  f1 = f1_score(y_test, predicted, pos_label=0)
-  print 'f1 =', f1  
+  classifier = sk.svm.LinearSVC()
+  cv_scores = sk.cross_validation.cross_val_score(
+    classifier,
+    tfidf_matrix,
+    bunch.target,
+    scoring='f1',
+    cv=5)
+  print 'cv scores:', cv_scores
+  print 'average:', np.mean(cv_scores)
 
 if __name__ == "__main__":
 
