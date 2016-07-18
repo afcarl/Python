@@ -10,12 +10,14 @@ notes_root = '/Users/Dima/Loyola/Mount/ards/text'
 feature_list = './features.txt'
 num_folds = 5
 ngram_range = (1, 2)
-min_df = 5
+min_df = 10
 
 def run_cross_validation():
   """Run n-fold CV and return average accuracy"""      
 
   bunch = sk.datasets.load_files(notes_root)
+  print 'positive class:', bunch.target_names[1]
+  print 'negative class:', bunch.target_names[0]
 
   # raw occurences
   vectorizer = sk.feature_extraction.text.CountVectorizer(
@@ -34,20 +36,16 @@ def run_cross_validation():
   # tf-idf 
   tf = sk.feature_extraction.text.TfidfTransformer()
   tfidf_matrix = tf.fit_transform(count_matrix)
-  
-  scores = []
-  folds = sk.cross_validation.KFold(len(bunch.data), n_folds=num_folds)
-  for train_indices, test_indices in folds:
-    train_x = tfidf_matrix[train_indices]
-    train_y = bunch.target[train_indices]
-    test_x = tfidf_matrix[test_indices]
-    test_y = bunch.target[test_indices]
-    classifier = sk.svm.LinearSVC()
-    model = classifier.fit(train_x, train_y)
-    accuracy = classifier.score(test_x, test_y)
-    scores.append(accuracy)
-  
-  print np.mean(scores)
+
+  classifier = sk.svm.LinearSVC()
+  cv_scores = sk.cross_validation.cross_val_score(
+    classifier,
+    tfidf_matrix,
+    bunch.target,
+    scoring='f1',
+    cv=5)
+  print 'cv scores:', cv_scores
+  print 'average:', np.mean(cv_scores)
 
 if __name__ == "__main__":
 
