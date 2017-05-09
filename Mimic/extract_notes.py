@@ -13,7 +13,7 @@ def write_to_single_dir():
   for row_id, subj_id, text in zip(frame.ROW_ID, frame.SUBJECT_ID, frame.TEXT):
     outfile = open('%s%s.txt' % (OUT_DIR, subj_id), 'a')
     # outfile.write('* * * * * ROW_ID: %s * * * * * \n\n' % row_id)
-    outfile.write(text)
+    outfile.write(text + '\n')
 
 def write_to_multiple_dirs():
   """Split input into files grouped in several directories"""
