@@ -1,14 +1,15 @@
 #! /usr/bin/env python
 import pandas, string, os
 
-CSV = '/Users/Dima/Loyola/Data/MimicIII/Source/DIAGNOSES_ICD.csv'
+DIAG_ICD9 = '/Users/Dima/Loyola/Data/MimicIII/Source/DIAGNOSES_ICD.csv'
+PROC_ICD9 = '/Users/Dima/Loyola/Data/MimicIII/Source/PROCEDURES_ICD.csv'
 OUTFILE = '/Users/Dima/Loyola/Data/MimicIII/PatientVec/'
 
-def subject_to_code_map():
+def subject_to_code_map(path):
   """Dictionary mapping subject ids to icd9 codes"""
 
   # read data frame from CSV file
-  frame = pandas.read_csv(CSV)
+  frame = pandas.read_csv(path)
 
   subj2codes = {} # key: subj_id, value: set of icd9 codes
   for subj_id, icd9_code in zip(frame.SUBJECT_ID, frame.ICD9_CODE):
@@ -20,6 +21,6 @@ def subject_to_code_map():
 
 if __name__ == "__main__":
 
-  subj2codes = subject_to_code_map()
+  subj2codes = subject_to_code_map(PROC_ICD9)
   for subj_id, codes in subj2codes.items():
     print subj_id, codes
