@@ -2,7 +2,7 @@
 import pandas, string, os
 
 NOTES_CSV = '/Users/Dima/Loyola/Data/MimicIII/Source/NOTEEVENTS.csv'
-OUT_DIR = '/Users/Dima/Loyola/Data/MimicIII/PatientVec/Patients/'
+OUT_DIR = '/Users/Dima/Loyola/Data/MimicIII/Patients/'
 BATCH = 500000
 
 def write_to_single_dir():
@@ -11,9 +11,9 @@ def write_to_single_dir():
   frame = pandas.read_csv(NOTES_CSV)
 
   for row_id, subj_id, text in zip(frame.ROW_ID, frame.SUBJECT_ID, frame.TEXT):
+    printable = ''.join(c for c in text if c in string.printable)
     outfile = open('%s%s.txt' % (OUT_DIR, subj_id), 'a')
-    # outfile.write('* * * * * ROW_ID: %s * * * * * \n\n' % row_id)
-    outfile.write(text + '\n')
+    outfile.write(printable + '\n')
 
 def write_to_multiple_dirs():
   """Split input into files grouped in several directories"""
