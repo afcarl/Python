@@ -11,8 +11,7 @@ from sklearn.metrics import f1_score
 
 notes_root = '/Users/Dima/Loyola/Data/Ards/Cuis/'
 feature_list = './features.txt'
-# ngram_range = (1, 2)
-ngram_range = (1, 1)
+ngram_range = (1, 1) # use unigrams for cuis
 min_df = 50
 
 def run_experiment():
