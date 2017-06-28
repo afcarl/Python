@@ -1,49 +1,49 @@
-#!/usr/bin/env python                                                                     
-import sklearn as sk
+#!/usr/bin/env python
 import numpy as np
-import sklearn.datasets
-import sklearn.feature_extraction.text
-import sklearn.cross_validation
-import sklearn.svm
+from sklearn.datasets import load_files
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.svm import LinearSVC
+from sklearn.model_selection import cross_val_score
 
-notes_root = '/Users/Dima/Loyola/Mount/ards/text'
+notes_root = '/Users/Dima/Loyola/Data/Ards/Cuis/'
 feature_list = './features.txt'
 num_folds = 5
-ngram_range = (1, 2)
-min_df = 10
+ngram_range = (1, 1) # use unigrams for cuis
+min_df = 100
 
 def run_cross_validation():
-  """Run n-fold CV and return average accuracy"""      
+  """Run n-fold CV and return average accuracy"""
 
-  bunch = sk.datasets.load_files(notes_root)
+  bunch = load_files(notes_root)
   print 'positive class:', bunch.target_names[1]
   print 'negative class:', bunch.target_names[0]
 
   # raw occurences
-  vectorizer = sk.feature_extraction.text.CountVectorizer(
-    ngram_range=ngram_range, 
+  vectorizer = CountVectorizer(
+    ngram_range=ngram_range,
     stop_words='english',
     min_df=min_df ,
     vocabulary=None,
     binary=False)
   count_matrix = vectorizer.fit_transform(bunch.data)
-  
+
   # print features to file for debugging
   feature_file = open(feature_list, 'w')
   for feature in vectorizer.get_feature_names():
     feature_file.write(feature + '\n')
-  
-  # tf-idf 
-  tf = sk.feature_extraction.text.TfidfTransformer()
+
+  # tf-idf
+  tf = TfidfTransformer()
   tfidf_matrix = tf.fit_transform(count_matrix)
 
-  classifier = sk.svm.LinearSVC()
-  cv_scores = sk.cross_validation.cross_val_score(
+  classifier = LinearSVC(class_weight='balanced')
+  cv_scores = cross_val_score(
     classifier,
     tfidf_matrix,
     bunch.target,
     scoring='f1',
-    cv=5)
+    cv=num_folds)
   print 'cv scores:', cv_scores
   print 'average:', np.mean(cv_scores)
 
