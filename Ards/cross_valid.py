@@ -10,7 +10,7 @@ notes_root = '/Users/Dima/Loyola/Data/Ards/Cuis/'
 feature_list = './features.txt'
 num_folds = 5
 ngram_range = (1, 1) # use unigrams for cuis
-min_df = 100
+min_df = 0
 
 def run_cross_validation():
   """Run n-fold CV and return average accuracy"""
