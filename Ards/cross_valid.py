@@ -44,9 +44,11 @@ def run_cross_validation():
     bunch.target,
     scoring='f1',
     cv=num_folds)
-  print 'cv scores:', cv_scores
-  print 'average:', np.mean(cv_scores)
-
+  
+  print 'fold f1s:', cv_scores
+  print 'average f1:', np.mean(cv_scores)
+  print 'standard devitation:', np.std(cv_scores)
+  
 if __name__ == "__main__":
 
   run_cross_validation()
