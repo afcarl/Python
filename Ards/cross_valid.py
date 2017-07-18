@@ -37,7 +37,7 @@ def run_cross_validation():
   tf = TfidfTransformer()
   tfidf_matrix = tf.fit_transform(count_matrix)
 
-  classifier = LinearSVC(class_weight='balanced')
+  classifier = LinearSVC(class_weight='balanced', C=1)
   cv_scores = cross_val_score(
     classifier,
     tfidf_matrix,
